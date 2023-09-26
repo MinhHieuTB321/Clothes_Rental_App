@@ -8,8 +8,8 @@ namespace UserService.Domain.Entities
         public string Email{get;set;}=default!;
         public string Role{get;set;}= default!;
 
-        public ICollection<Order>? Order{get;set;}
-        public ICollection<Wallet>? Wallet{get;set;}
-        public ICollection<Payment>? Payment{get;set;}
+        public ICollection<Order>? Orders{get;set;}
+        public ICollection<Wallet>? Wallets{get;set;}
+        public ICollection<Payment>? Payments{get;set;}
     }
 }
