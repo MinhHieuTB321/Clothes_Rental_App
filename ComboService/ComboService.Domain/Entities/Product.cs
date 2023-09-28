@@ -10,6 +10,7 @@ namespace ComboService.Domain.Entities
     {
         public Guid ProductId { get; set; } = default!;
         public string ProductName { get; set; } = default!;
+        public Guid RootProductId { get; set; } = default!;
         public Product RootProduct { get; set; } = default!;
         public string Description { get; set; } = default!;
         public string Status { get; set; } = default!;

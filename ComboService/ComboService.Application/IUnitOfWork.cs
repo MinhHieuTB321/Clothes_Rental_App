@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComboService.Infrastructures.FluentAPIs
+namespace ComboService.Application
 {
-    public class ShopConfiguration
+    public interface IUnitOfWork : IDisposable
     {
     }
 }

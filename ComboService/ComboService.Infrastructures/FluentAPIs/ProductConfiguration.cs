@@ -11,9 +11,11 @@ namespace ComboService.Infrastructures.FluentAPIs
 {
     public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
-        public void Configure(EntityTypeBuilder<Product> buidler)
+        public void Configure(EntityTypeBuilder<Product> builder)
         {
-
+            builder.HasOne(x => x.RootProduct).WithMany()
+                .HasForeignKey(x => x.RootProductId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
