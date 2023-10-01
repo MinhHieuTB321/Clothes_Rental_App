@@ -1,7 +1,9 @@
+using UserService.Domain.Entities;
+
 namespace UserService.Application.IRepositories
 {
     
-    public interface IUserRepository
+    public interface IUserRepository:IGenericRepository<User>
     {
 
     }

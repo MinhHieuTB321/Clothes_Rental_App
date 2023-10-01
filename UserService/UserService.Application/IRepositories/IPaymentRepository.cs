@@ -1,7 +1,9 @@
+using UserService.Domain.Entities;
+
 namespace UserService.Application.IRepositories
 {
     
-    public interface IPaymentRepository
+    public interface IPaymentRepository:IGenericRepository<Payment>
     {
 
     }

@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using UserService.Domain.Entities;
 
@@ -15,5 +16,10 @@ namespace UserService.Infrastructures
         public DbSet<Payment> Payments{get;set;}=default!;
         public DbSet<Transaction> Transactions{get;set;}=default!;
         public DbSet<Wallet> Wallets{get;set;}=default!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
     }
 }

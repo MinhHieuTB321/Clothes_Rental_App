@@ -2,9 +2,9 @@ namespace UserService.Domain.Entities
 {
     public abstract class BaseEntity
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; }=Guid.NewGuid();
 
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; set; }=DateTime.Now;
 
         public Guid? CreatedBy { get; set; }
 

@@ -12,11 +12,13 @@ namespace UserService.Infrastructures.FluentAPIs
 
             builder.HasOne(p=>p.Order)
                    .WithMany(o=>o.Payments)
-                   .HasForeignKey(p=>p.OrderId);
+                   .HasForeignKey(p=>p.OrderId)
+                   .OnDelete(DeleteBehavior.NoAction);
             
             builder.HasOne(p=>p.User)
                    .WithMany(u=>u.Payments)
-                   .HasForeignKey(p=>p.UserId);
+                   .HasForeignKey(p=>p.UserId)
+                   .OnDelete(DeleteBehavior.NoAction);
             
             builder.HasMany(p=>p.Transactions)
                    .WithOne(t=>t.Payment)

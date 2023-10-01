@@ -1,7 +1,9 @@
+using UserService.Domain.Entities;
+
 namespace UserService.Application.IRepositories
 {
     
-    public interface IOrderRepository
+    public interface IOrderRepository:IGenericRepository<Order>
     {
 
     }

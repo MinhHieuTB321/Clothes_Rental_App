@@ -1,6 +1,9 @@
 using UserService.Application.Commons;
+using UserService.Application.GlobalExceptionHandling.Utility;
 using UserService.Infrastructures;
 using UserService.WebApi;
+using UserServices.WebAPI.Middlewares;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +34,10 @@ else
 }
 
 app.UseCors();
+
+app.UseMiddleware(typeof(GlobalErrorHandlingMiddleware));
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<PerformanceMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

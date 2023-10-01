@@ -1,9 +1,15 @@
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using UserService.Application.Commons;
+using UserService.Application.Interfaces;
+using UserService.WebApi.Services;
+using UserServices.WebAPI.Middlewares;
 
 namespace UserService.WebApi
 {
@@ -12,6 +18,16 @@ namespace UserService.WebApi
         public static IServiceCollection AddWebAPIService(this IServiceCollection services, AppConfiguration appConfiguration)
         {
 
+            services.AddScoped<IClaimsService,ClaimsService>();
+            services.AddRouting(options => options.LowercaseUrls = true);
+
+            services.AddSingleton<ExceptionMiddleware>();
+            services.AddSingleton<PerformanceMiddleware>();
+            services.AddSingleton<Stopwatch>();
+            services.AddHttpContextAccessor();
+            services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+            services.AddFluentValidationAutoValidation();
+            services.AddFluentValidationClientsideAdapters();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 

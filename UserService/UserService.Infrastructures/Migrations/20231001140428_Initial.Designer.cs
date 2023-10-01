@@ -12,7 +12,7 @@ using UserService.Infrastructures;
 namespace UserService.Infrastructures.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230926170604_Initial")]
+    [Migration("20231001140428_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -28,7 +28,6 @@ namespace UserService.Infrastructures.Migrations
             modelBuilder.Entity("UserService.Domain.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedBy")
@@ -55,15 +54,18 @@ namespace UserService.Infrastructures.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("PayerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RecipientId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<double>("Total")
                         .HasColumnType("float");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("PayerId");
 
                     b.ToTable("Orders");
                 });
@@ -101,10 +103,19 @@ namespace UserService.Infrastructures.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("PartyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UserId")
@@ -149,13 +160,13 @@ namespace UserService.Infrastructures.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("PaymentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("WalletId")
@@ -173,7 +184,6 @@ namespace UserService.Infrastructures.Migrations
             modelBuilder.Entity("UserService.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedBy")
@@ -205,6 +215,10 @@ namespace UserService.Infrastructures.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -265,13 +279,13 @@ namespace UserService.Infrastructures.Migrations
 
             modelBuilder.Entity("UserService.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("UserService.Domain.Entities.User", "User")
+                    b.HasOne("UserService.Domain.Entities.User", "Payer")
                         .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("PayerId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Payer");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.Payment", b =>
@@ -279,13 +293,13 @@ namespace UserService.Infrastructures.Migrations
                     b.HasOne("UserService.Domain.Entities.Order", "Order")
                         .WithMany("Payments")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("UserService.Domain.Entities.User", "User")
                         .WithMany("Payments")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -304,7 +318,7 @@ namespace UserService.Infrastructures.Migrations
                     b.HasOne("UserService.Domain.Entities.Wallet", "Wallet")
                         .WithMany("Transactions")
                         .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Payment");

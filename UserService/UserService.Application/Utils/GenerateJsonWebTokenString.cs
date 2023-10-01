@@ -22,7 +22,7 @@ namespace UserService.Application.Utils
                issuer: secretKey,
                audience: secretKey,
                claims,
-               expires: DateTime.UtcNow.AddMinutes(1000),
+               expires: DateTime.UtcNow.AddHours(1000),
                signingCredentials: credentials);
 
 

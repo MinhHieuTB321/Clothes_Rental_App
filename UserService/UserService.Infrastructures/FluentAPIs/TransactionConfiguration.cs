@@ -17,7 +17,8 @@ namespace UserService.Infrastructures.FluentAPIs
                   
             builder.HasOne(t=>t.Wallet)
                   .WithMany(p=>p.Transactions)
-                  .HasForeignKey(p=>p.WalletId);
+                  .HasForeignKey(p=>p.WalletId)
+                   .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
