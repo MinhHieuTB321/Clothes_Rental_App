@@ -16,8 +16,8 @@ namespace ShopService.Infrastructures.FluentAPIs
         {
             builder.HasKey(x => x.Id);
             builder.HasIndex(o => o.Email).IsUnique();
-            //builder.HasIndex(u => u.Phone).IsUnique();
-            builder.HasMany(u => u.Shop).WithOne(o=>o.Owner).HasForeignKey(x=>x.OwnerId);
+            builder.HasIndex(u => u.Phone).IsUnique();
+            builder.HasMany(u => u.Shops).WithOne(o=>o.Owner).HasForeignKey(x=>x.OwnerId);
         }
     }
 }

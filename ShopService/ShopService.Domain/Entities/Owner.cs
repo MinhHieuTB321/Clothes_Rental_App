@@ -8,11 +8,11 @@ namespace ShopService.Domain.Entities
 {
     public class Owner : BaseEntity
     {
-        public string Name { get; set; } = null;
-        public string Email { get; set; } = null!;
-        public string Phone { get; set; } = null!;
-        public string IsActive { get; set; } = null!;
+        public string Name { get; set; } = default!;
+        public string Email { get; set; } = default!;
+        public string Phone { get; set; } = default!;
+        public string Status { get; set; } = default!;
 
-        public ICollection<Shop> Shop { get; set; }
+        public ICollection<Shop>? Shops { get; set; }
     }
 }

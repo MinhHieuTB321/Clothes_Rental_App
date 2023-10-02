@@ -9,6 +9,6 @@ namespace ShopService.Domain.Entities
     public class Category : BaseEntity
     {
         public string CategoryName { get; set; } = null!;
-        public ICollection<Product> Product { get; set; }
+        public ICollection<Product>? Products { get; set; }
     }
 }

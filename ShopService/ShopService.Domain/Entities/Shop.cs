@@ -13,13 +13,15 @@ namespace ShopService.Domain.Entities
         public string ShopEmail { get; set; } = default!;
         public string ShopPhone { get; set; } = default!;
         public string Address { get; set; } = default!;
+        public string FileName { get; set; } = default!;
+        public string FileUrl { get; set; } = default!;
         public string Status { get; set; } = default!;
 
         public Guid OwnerId { get; set; } = default!;
-        public Owner Owner { get; set; }
+        public Owner Owner { get; set; } = default!;
 
-        public ICollection<Product> Product { get; set; }
+        public ICollection<Product>? Products { get; set; }
 
-        public ICollection<ShopLogo> Logo { get; set; } = default!;
+
     }
 }
