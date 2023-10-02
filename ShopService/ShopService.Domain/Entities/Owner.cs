@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShopService.Domain
+namespace ShopService.Domain.Entities
 {
-    public class OwnerEntity:BaseEntity
+    public class Owner : BaseEntity
     {
         public string Name { get; set; } = null;
         public string Email { get; set; } = null!;
         public string Phone { get; set; } = null!;
-        public bool IsActive { get; set; } = false;
+        public string IsActive { get; set; } = null!;
 
-        public ICollection<ShopEntity>Shops { get; set; }
+        public ICollection<Shop> Shop { get; set; }
     }
 }

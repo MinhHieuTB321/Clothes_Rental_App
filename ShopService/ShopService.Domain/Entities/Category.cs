@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShopService.Domain
+namespace ShopService.Domain.Entities
 {
-    public class CategoryEntity:BaseEntity
+    public class Category : BaseEntity
     {
         public string CategoryName { get; set; } = null!;
-        public ICollection<ProductEnity> Products { get; set;}
+        public ICollection<Product> Product { get; set; }
     }
 }

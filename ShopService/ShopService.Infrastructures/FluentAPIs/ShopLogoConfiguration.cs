@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 
 namespace ShopService.Infrastructures.FluentAPIs
 {
-    public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage>
+    public class ShopLogoConfiguration : IEntityTypeConfiguration<ShopLogo>
     {
-        public void Configure(EntityTypeBuilder<ProductImage> builder)
+        public void Configure(EntityTypeBuilder<ShopLogo> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.HasOne(x => x.Product).WithMany(x => x.ProductImages).HasForeignKey(x => x.ProductId);
-
+            builder.HasOne(x => x.Shop).WithMany(p => p.Logo).HasForeignKey(x => x.ShopId);
         }
     }
 }
