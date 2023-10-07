@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ComboService.Application;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,11 @@ namespace ComboService.Infrastructures
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, string DbConnection)
         {
+
+            #region DI_Service
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            #endregion
+
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(DbConnection);

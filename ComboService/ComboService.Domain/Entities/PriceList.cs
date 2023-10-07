@@ -8,7 +8,6 @@ namespace ComboService.Domain.Entities
 {
     public class PriceList : BaseEntity
     {
-        public Guid PriceListId { get; set; } = default!;
         public decimal Deposit { get; set; } = default!;
         public decimal RentalPrice { get; set; } = default!;
         public string Duration { get; set; } = default!;
