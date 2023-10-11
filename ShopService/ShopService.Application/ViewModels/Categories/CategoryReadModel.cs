@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.ViewModels.Categories
 {
-    internal class CategoryReadModel
+    public class CategoryReadModel
     {
     }
 }

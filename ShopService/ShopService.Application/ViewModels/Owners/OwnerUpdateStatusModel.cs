@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.ViewModels.Owners
 {
-    public class OwnerReadModel
+    public class OwnerUpdateStatusModel
     {
-        public string Name { get; set; } = default!;
-        public string Email { get; set; } = default!;
-        public string Phone { get; set; } = default!;
         public string Status { get; set; } = default!;
     }
 }

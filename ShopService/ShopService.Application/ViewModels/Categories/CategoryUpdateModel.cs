@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.ViewModels.Categories
 {
-    internal class CategoryUpdateModel
+    public class CategoryUpdateModel:CategoryCreateModel
     {
+        public Guid Id { get; set; }
     }
 }

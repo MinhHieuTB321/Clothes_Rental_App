@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.ViewModels.Images
 {
-    internal class ImageCreateModel
+    public class ImageCreateModel
     {
+        public string FileName { get; set; } = default!;
+        public string FileUrl { get; set; } = default!;
+
+        public Guid ProductId { get; set; }
     }
 }

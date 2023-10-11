@@ -1,4 +1,5 @@
-﻿using ShopService.Application.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
+using ShopService.Application.Interfaces;
 
 namespace ShopService.WebApi.Controllers
 {
@@ -8,6 +9,13 @@ namespace ShopService.WebApi.Controllers
         public ShopsController(IShopService service)
         {
             _service = service;
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllShop()
+        {
+            var result= await _service.GetAllAsync();
+            if (result is null) return BadRequest();
+            return Ok(result);
         }
     }
 }

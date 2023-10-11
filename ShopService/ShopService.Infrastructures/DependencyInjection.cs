@@ -27,7 +27,7 @@ namespace ShopService.Infrastructures
             #region DI_SERVICES
             services.AddScoped<ICurrentTime, CurrentTime>();
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IShopService, Shop_Service>();
+            services.AddScoped<IShopService, ShopinService>();
             services.AddScoped<IOwnerService, OwnerService>();
             services.AddScoped<ICategoryService, CategoryService>();
             #endregion

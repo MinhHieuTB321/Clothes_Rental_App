@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShopService.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.ViewModels.Products
 {
-    internal class ProductUpdateModel
+    public class ProductUpdateModel:ProductCreateModel
     {
+        public Guid Id { get; set; }
+        
     }
 }

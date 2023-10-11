@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.ViewModels.Categories
 {
-    internal class CategoryCreateModel
+    public class CategoryCreateModel
     {
+        public string CategoryName { get; set; } = null!;
     }
 }
