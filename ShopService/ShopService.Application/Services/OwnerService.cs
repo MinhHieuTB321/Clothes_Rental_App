@@ -31,6 +31,8 @@ namespace ShopService.Application.Services
             if (!ValidationLibrary.IsSpace(ownerCreateModel.Name)) throw new Exception("Have not inputted Name!");
             if (!ValidationLibrary.IsSpace(ownerCreateModel.Email)) throw new Exception("Have not inputted Email!");
             if (!ValidationLibrary.IsValidEmail(ownerCreateModel.Email)) throw new Exception("Invalid email.");
+            var duplicatedEmail = await _unitOfWork.OwnerRepository.FindByField(x => x.Email.Equals(ownerCreateModel.Email));
+            if (duplicatedEmail != null) throw new Exception("Email is already in use.");
             if (!ValidationLibrary.IsSpace(ownerCreateModel.Phone)) throw new Exception("Have not inputted Phone!");
             await _unitOfWork.OwnerRepository.AddAsync(map);
             if(!await _unitOfWork.SaveChangeAsync()) throw new Exception("There is an error in the system");

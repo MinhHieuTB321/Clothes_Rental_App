@@ -30,6 +30,7 @@ namespace ShopService.Infrastructures
             services.AddScoped<IShopService, ShopinService>();
             services.AddScoped<IOwnerService, OwnerService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IProductImageService, ProductImageService>();
             #endregion
 
             services.AddDbContext<AppDbContext>(

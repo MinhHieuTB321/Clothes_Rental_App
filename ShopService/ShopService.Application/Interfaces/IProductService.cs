@@ -1,4 +1,5 @@
 ﻿using ShopService.Application.ViewModels.Products;
+using ShopService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
@@ -10,7 +11,7 @@ namespace ShopService.Application.Interfaces
 {
     public interface IProductService
     {
-        Task<ProductReadModel> CreateProduct(ProductCreateModel productCreateModel);
+        Task<Product> CreateProduct(ProductCreateModel productCreateModel);
         Task<ProductReadModel> UpdateProduct(ProductUpdateModel productUpdateModel);
         Task<bool> DeleteProduct(Guid id);
         Task<IEnumerable<ProductReadModel>> GetAllAsync();

@@ -8,6 +8,7 @@ namespace ShopService.Application.ViewModels.Shops
 {
     public class ShopReadModel
     {
+        public Guid Id { get; set; }
         public string ShopName { get; set; } = default!;
         public string ShopCode { get; set; } = default!;
         public string ShopEmail { get; set; } = default!;

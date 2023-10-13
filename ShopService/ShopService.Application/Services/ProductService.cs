@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ShopService.Application.Interfaces;
 using ShopService.Application.ViewModels.Products;
+using ShopService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,13 @@ namespace ShopService.Application.Services
             _currentUser = claimService.GetCurrentUser;
         }
 
-        public Task<ProductReadModel> CreateProduct(ProductCreateModel productCreateModel)
+        public async Task<Product> CreateProduct(ProductCreateModel productCreateModel)
         {
-            throw new NotImplementedException();
+            var map = _mapper.Map<Product>(productCreateModel);
+            await _unitOfWork.ProductRepository.AddAsync(map);
+            if (!await _unitOfWork.SaveChangeAsync()) throw new Exception("There is an error in the system.");
+            return map;
+
         }
 
         public async Task<bool> DeleteProduct(Guid id)

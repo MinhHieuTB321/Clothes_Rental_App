@@ -13,12 +13,16 @@ namespace ShopService.Application.Commons
 {
     public static class FirebaseUtility
     {
-        private static IConfiguration _configuration;
+        //private static IConfiguration _configuration= new Configuration;
         // Vulnurable Data
-        private static string API_KEY = _configuration["FireBase:ApiKey"];
+        /*private static string API_KEY = _configuration["FireBase:ApiKey"];
         private static string Bucket = _configuration["FireBase:Bucket"];
         private static string AuthEmail = _configuration["FireBase:AuthEmail"];
-        private static string AuthPassword = _configuration["FireBase:AuthPassword"];
+        private static string AuthPassword = _configuration["FireBase:AuthPassword"];*/
+        private static string API_KEY = "AIzaSyD8jIG3rxybg8_SsskVhiHV8K6dBOCgNvk";
+        private static string Bucket = "clothes-rental-app.appspot.com";
+        private static string AuthEmail = "admin1@gmail.com";
+        private static string AuthPassword = "Admin@@";
         public static async Task<FileUploadModel> UploadFileAsync(this IFormFile fileUpload)
         {
             if (fileUpload.Length > 0)

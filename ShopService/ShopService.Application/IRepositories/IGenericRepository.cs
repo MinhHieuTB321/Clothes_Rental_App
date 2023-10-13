@@ -22,5 +22,6 @@ namespace ShopService.Application.IRepositories
 
         //Task<Pagination<TEntity>> ToPagination(int pageNumber = 0, int pageSize = 10);
         Task<List<TEntity>> FindListByField(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes);
+        Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes);
     }
 }

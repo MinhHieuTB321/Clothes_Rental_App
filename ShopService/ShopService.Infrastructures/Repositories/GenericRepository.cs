@@ -129,5 +129,11 @@ namespace ShopService.Infrastructures.Repositories
            .Where(expression!)
             .OrderByDescending(x => x.CreationDate)
             .ToListAsync();
+
+        public async Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes)
+        => await includes
+           .Aggregate(_dbSet.AsQueryable(),
+               (entity, property) => entity.Include(property))
+           .Where(expression).Where(x => x.IsDeleted == false).ToListAsync();
     }
 }
