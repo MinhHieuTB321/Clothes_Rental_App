@@ -28,9 +28,11 @@ namespace ComboService.Application.Repositories
 
         Task Update(TEntity entity, int Id);
         Task UpdateGuid(TEntity entity, Guid Id);
+        public Task UpdateDetached(TEntity entity);
         Task HardDelete(int Key);
         Task HardDeleteGuid(Guid Key);
         public EntityEntry<TEntity> Delete(TEntity entity);
+        void SoftRemove(TEntity entity);
 
         public IQueryable<TEntity> AsNoTracking();
 

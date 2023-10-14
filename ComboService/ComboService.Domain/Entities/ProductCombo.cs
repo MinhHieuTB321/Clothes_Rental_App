@@ -18,6 +18,6 @@ namespace ComboService.Domain.Entities
         //Product
         public Guid ProductId { get; set; } = default!;
 
-        public ICollection<Product> ProductInCombo { get; set; }
+        public Product Product { get; set; } = default!;
     }
 }

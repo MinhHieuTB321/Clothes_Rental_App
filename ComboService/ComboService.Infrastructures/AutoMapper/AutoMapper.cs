@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using ComboService.Application.ViewModels.ComboViewModel.Request;
+using ComboService.Application.ViewModels.ComboViewModel.Response;
+using ComboService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +14,22 @@ namespace ComboService.Infrastructures.AutoMapper
     {
         public AutoMapperProfile()
         {
+            #region Combo
+            CreateMap<Combo, ComboResponseModel>().ReverseMap();
+            CreateMap<CreateComboRequestModel, Combo>();
+            CreateMap<UpdateComboRequestModel, Combo>();
+            #endregion
 
+            #region PriceList
+            CreateMap<PriceList, PriceListResponseModel>().ReverseMap();
+            CreateMap<CreatePriceListRequestModel, PriceList>();
+            CreateMap<UpdatePriceListRequestModel, PriceList>();
+            #endregion
+
+            #region ProductCombo
+            CreateMap<ProductCombo, ProductComboResponseModel>().ReverseMap();
+            CreateMap<ProductComboRequestModel, ProductCombo>();
+            #endregion
         }
     }
 }

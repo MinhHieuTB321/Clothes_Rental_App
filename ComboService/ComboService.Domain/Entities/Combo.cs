@@ -14,7 +14,6 @@ namespace ComboService.Domain.Entities
         public decimal TotalValue { get; set; } = default!;
 
         //PriceList
-        public Guid PriceListId { get; set; } = default!;
         public ICollection<PriceList> PriceLists { get; set; } = default!;
         
         //Shop

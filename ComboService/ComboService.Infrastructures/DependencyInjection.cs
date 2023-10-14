@@ -1,4 +1,9 @@
 ﻿using ComboService.Application;
+using ComboService.Application.Interfaces;
+using ComboService.Application.Repositories;
+using ComboService.Application.Services;
+using ComboService.Infrastructures.AutoMapper;
+using ComboService.Infrastructures.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -17,12 +22,15 @@ namespace ComboService.Infrastructures
 
             #region DI_Service
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IComboService, CombosService>();
+            services.AddScoped<IPriceListService, PriceListService>();
             #endregion
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(DbConnection);
             });
+            services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
             services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             return services;
         }

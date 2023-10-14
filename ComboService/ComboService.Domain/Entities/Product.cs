@@ -18,7 +18,7 @@ namespace ComboService.Domain.Entities
         public string Color { get; set; } = default!;
         public string Material { get; set; } = default!;
         public decimal Price { get; set; } = default!;
-        public decimal Compesation { get; set; } = default!;
+        public decimal Compensation { get; set; } = default!;
 
 
         //Image
@@ -28,5 +28,6 @@ namespace ComboService.Domain.Entities
         //Category
         public Guid CategoryId { get; set; } = default!;
 
+        public ICollection<ProductCombo> ProductCombos { get; set; } = default!;
     }
 }

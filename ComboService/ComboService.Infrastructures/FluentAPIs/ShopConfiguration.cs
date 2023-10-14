@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ComboService.Domain.Entities;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +11,8 @@ namespace ComboService.Infrastructures.FluentAPIs
 {
     public class ShopConfiguration
     {
+        public void Configure(EntityTypeBuilder<Shop> builder)
+        {
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace ComboService.Infrastructures.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "7.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -53,9 +53,6 @@ namespace ComboService.Infrastructures.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("PriceListId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -74,11 +71,28 @@ namespace ComboService.Infrastructures.Migrations
                     b.HasIndex("ShopId");
 
                     b.ToTable("Combo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("3458fc6a-42b6-4d27-93de-53e40b900670"),
+                            ComboName = "Combo Dự Tiệc Cuối Năm",
+                            CreationDate = new DateTime(2023, 10, 13, 20, 43, 17, 148, DateTimeKind.Local).AddTicks(6569),
+                            IsDeleted = false,
+                            Quantity = 5,
+                            ShopId = new Guid("a8447a39-91eb-41d6-b872-bdc2ffd89af4"),
+                            Status = "Active",
+                            TotalValue = 7300000m
+                        });
                 });
 
             modelBuilder.Entity("ComboService.Domain.Entities.PriceList", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ComboId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedBy")
@@ -114,6 +128,8 @@ namespace ComboService.Infrastructures.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ComboId");
+
                     b.ToTable("PriceList");
                 });
 
@@ -130,7 +146,7 @@ namespace ComboService.Infrastructures.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Compesation")
+                    b.Property<decimal>("Compensation")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("CreatedBy")
@@ -165,9 +181,6 @@ namespace ComboService.Infrastructures.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("ProductComboId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("ProductName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -184,8 +197,6 @@ namespace ComboService.Infrastructures.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductComboId");
 
                     b.HasIndex("RootProductId");
 
@@ -232,6 +243,8 @@ namespace ComboService.Infrastructures.Migrations
 
                     b.HasIndex("ComboId");
 
+                    b.HasIndex("ProductId");
+
                     b.ToTable("ProductCombo");
                 });
 
@@ -265,6 +278,9 @@ namespace ComboService.Infrastructures.Migrations
 
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ShopCode")
                         .IsRequired()
@@ -306,7 +322,7 @@ namespace ComboService.Infrastructures.Migrations
                 {
                     b.HasOne("ComboService.Domain.Entities.Combo", "Combo")
                         .WithMany("PriceLists")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("ComboId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -315,10 +331,6 @@ namespace ComboService.Infrastructures.Migrations
 
             modelBuilder.Entity("ComboService.Domain.Entities.Product", b =>
                 {
-                    b.HasOne("ComboService.Domain.Entities.ProductCombo", null)
-                        .WithMany("ProductInCombo")
-                        .HasForeignKey("ProductComboId");
-
                     b.HasOne("ComboService.Domain.Entities.Product", "RootProduct")
                         .WithMany()
                         .HasForeignKey("RootProductId")
@@ -336,7 +348,15 @@ namespace ComboService.Infrastructures.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ComboService.Domain.Entities.Product", "Product")
+                        .WithMany("ProductCombos")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Combo");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ComboService.Domain.Entities.Combo", b =>
@@ -346,9 +366,9 @@ namespace ComboService.Infrastructures.Migrations
                     b.Navigation("ProductCombos");
                 });
 
-            modelBuilder.Entity("ComboService.Domain.Entities.ProductCombo", b =>
+            modelBuilder.Entity("ComboService.Domain.Entities.Product", b =>
                 {
-                    b.Navigation("ProductInCombo");
+                    b.Navigation("ProductCombos");
                 });
 
             modelBuilder.Entity("ComboService.Domain.Entities.Shop", b =>

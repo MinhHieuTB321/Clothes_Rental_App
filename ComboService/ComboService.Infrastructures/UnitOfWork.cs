@@ -1,5 +1,6 @@
 ﻿using ComboService.Application;
 using ComboService.Application.Repositories;
+using ComboService.Domain.Entities;
 using ComboService.Infrastructures.Repositories;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace ComboService.Infrastructures
         }
         private readonly Dictionary<Type, object> repositories = new Dictionary<Type, object>();
 
-        public IGenericRepository<T>? Repository<T>() where T : class
+        public IGenericRepository<T>? Repository<T>() where T : BaseEntity
         {
             Type type = typeof(T);
             if(!repositories.TryGetValue(type, out object? value))

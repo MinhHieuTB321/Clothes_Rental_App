@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComboService.Domain.Entities
+namespace ComboService.Application.ViewModels.ComboViewModel.Request
 {
-    public class PriceList : BaseEntity
+    public class CreatePriceListRequestModel
     {
         public decimal Deposit { get; set; } = default!;
         public decimal RentalPrice { get; set; } = default!;
         public string Duration { get; set; } = default!;
         public Guid ComboId { get; set; } = default!;
-        public Combo Combo { get; set; } = default!;
     }
 }

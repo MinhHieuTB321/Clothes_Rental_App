@@ -1,10 +1,12 @@
 using ComboService.Infrastructures;
+using ComboService.WebApi;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 {
 
     builder.Services.AddInfrastructureServices(builder.Configuration.GetConnectionString("DefaultConnection")!);
+    builder.Services.AddWebAPIService();
 }
 
 var app = builder.Build();
@@ -15,6 +17,8 @@ var app = builder.Build();
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+    app.UseCors();
+
 
     app.UseHttpsRedirection();
 

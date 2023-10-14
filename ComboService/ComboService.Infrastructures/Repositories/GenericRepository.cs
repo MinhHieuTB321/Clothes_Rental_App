@@ -1,4 +1,5 @@
 ﻿using ComboService.Application.Repositories;
+using ComboService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ComboService.Infrastructures.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
         private static ApplicationDbContext Context;
         private static DbSet<T> Table { get; set; }
@@ -87,6 +88,10 @@ namespace ComboService.Infrastructures.Repositories
             Table.Update(existEntity);
         }
 
+        public async Task UpdateDetached(T entity)
+        {
+            Table.Update(entity);
+        }
         public async Task HardDelete(int Key)
         {
             var rs = await GetById(Key);
@@ -107,6 +112,12 @@ namespace ComboService.Infrastructures.Repositories
         public IQueryable<T> AsNoTracking()
         {
             return Table.AsNoTracking();
+        }
+
+        public void SoftRemove(T entity)
+        {
+            entity.IsDeleted = true;
+            Table.Update(entity);
         }
 
 
