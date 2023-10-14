@@ -1,4 +1,5 @@
 using AutoMapper;
+using UserService.Application.ViewModels.Orders;
 using UserService.Application.ViewModels.Payments;
 using UserService.Application.ViewModels.Transactions;
 using UserService.Application.ViewModels.Users;
@@ -22,7 +23,7 @@ namespace UserService.Infrastructures.Mappers
                 .ReverseMap();
 
                 CreateMap<TransactionCreateModel, Payment>()
-                .ForMember(x => x.UserId, opt => opt.MapFrom(x => x.PartyId))
+                .ForMember(x => x.OwnerId, opt => opt.MapFrom(x => x.OwnerId))
                 .ForMember(x => x.Amount, opt => opt.MapFrom(x => x.Amount))
                 .ForMember(x => x.Method, opt => opt.MapFrom(x => x.Method))
                 .ReverseMap(); 
@@ -49,7 +50,11 @@ namespace UserService.Infrastructures.Mappers
                 .ForMember(x => x.Balance, opt => opt.Ignore())
                 .ForMember(x => x.Payments, opt => opt.Ignore())
                 .ReverseMap();
+            CreateMap<CustomerPublishedModel,User>().ReverseMap();
             #endregion  
+            #region Order
+            CreateMap<OrderReadModel,Order>().ReverseMap();
+            #endregion
         }
     }
 }

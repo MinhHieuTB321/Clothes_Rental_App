@@ -11,10 +11,6 @@ namespace OrderService.Domain.Entities
         public string ComboName { get; set; } = default!;
         public int Quantity { get; set; } = default!;
         public string Status { get; set; } = default!;
-
-        //Fee
-        public ICollection<Fee>? Fees { get; set; }
-
         //Shop
         public Guid ShopId { get; set; } = default!;
         public Shop Shop { get; set; } = default!;

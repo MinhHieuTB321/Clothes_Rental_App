@@ -23,6 +23,11 @@ namespace OrderService.Infrastructures.FluentAPIs
             builder.HasMany(x => x.OrderDetails)
                 .WithOne(x => x.Order)
                 .HasForeignKey(x => x.OrderId);
+
+
+            builder.HasOne(x => x.Shop)
+               .WithMany(x => x.Orders)
+               .HasForeignKey(x => x.ShopId);
         }
     }
 }

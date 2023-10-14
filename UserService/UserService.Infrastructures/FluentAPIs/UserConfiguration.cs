@@ -12,8 +12,8 @@ namespace UserService.Infrastructures.FluentAPIs
             builder.Property(x=>x.Id).ValueGeneratedNever();
             
             builder.HasMany(u=>u.Orders)
-                .WithOne(o=>o.Payer)
-                .HasForeignKey(o=>o.PayerId)
+                .WithOne(o=>o.Customer)
+                .HasForeignKey(o=>o.CustomerId)
                 .OnDelete(DeleteBehavior.NoAction);
 
 
@@ -22,8 +22,8 @@ namespace UserService.Infrastructures.FluentAPIs
                 .HasForeignKey(w=>w.UserId);
             
             builder.HasMany(u=>u.Payments)
-                .WithOne(p=>p.User)
-                .HasForeignKey(p=>p.UserId)
+                .WithOne(p=>p.Customer)
+                .HasForeignKey(p=>p.CustomerId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

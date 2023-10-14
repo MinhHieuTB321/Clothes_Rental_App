@@ -4,9 +4,9 @@ namespace  UserService.Application.ViewModels.Payments
     {
         public Guid Id{get;set;}
         //public Guid RecipientId{get;set;}
-        public Guid PartyId{get;set;}
+        public Guid OwnerId{get;set;}
         public Guid OrderId{get;set;}
-        public string? PartyName{get;set;}
+        public string? OwnerName{get;set;}
         public string? Phone { get; set; }
         public double Amount{get;set;}
         public string? Method { get; set; }

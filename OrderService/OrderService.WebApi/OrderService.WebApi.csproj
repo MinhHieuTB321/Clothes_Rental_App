@@ -7,6 +7,8 @@
 	  <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
 	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	  <NoWarn>1701;1702;1591</NoWarn>
+	  <UserSecretsId>7f522f29-8d80-442c-9ba0-1b96363c5be7</UserSecretsId>
+	  <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +19,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 

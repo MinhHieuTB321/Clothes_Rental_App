@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using UserService.Application;
+using UserService.Application.AsyncDataServices;
+using UserService.Application.Commons;
+using UserService.Application.EventProcessing;
 using UserService.Application.Interfaces;
 using UserService.Application.IRepositories;
 using UserService.Application.Services;
@@ -11,16 +14,18 @@ namespace UserService.Infrastructures
 {
     public static class DenpendencyInjection
     {
-        public static IServiceCollection AddInfrastructuresService(this IServiceCollection services, string databaseConnection)
+        public static IServiceCollection AddInfrastructuresService(this IServiceCollection services, AppConfiguration appConfiguration)
         {
-
+            services.AddHostedService<MessageBusSubcriber>();
+            services.AddSingleton<IEventProcessor, EventProcessor>();
+            services.AddSingleton<IMessageBusClient, MessageBusClient>();
             #region DI_REPOSITORIES
-            services.AddScoped<IUnitOfWork,UnitOfWork>();
-            services.AddScoped<IUserRepository,UserRepository>();
-            services.AddScoped<IOrderRepository,OrderRepository>();
-            services.AddScoped<IWalletRepository,WalletRepository>();
-            services.AddScoped<ITransactionRepository,TransactionRepository>();
-            services.AddScoped<IPaymentRepository,PaymentRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IWalletRepository, WalletRepository>();
+            services.AddScoped<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
             #endregion
 
             #region DI_SERVICES
@@ -35,7 +40,7 @@ namespace UserService.Infrastructures
             services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddDbContext<AppDbContext>(opt=>opt.UseSqlServer(databaseConnection));  
+            services.AddDbContext<AppDbContext>(opt=>opt.UseSqlServer(appConfiguration.DatabaseConnection));  
             return services;
         } 
     }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UserService.Application.AsyncDataServices;
 using UserService.Application.Interfaces;
+using UserService.Application.ViewModels.Orders;
 using UserService.Application.ViewModels.Transactions;
 
 namespace UserService.WebApi.Controllers
@@ -8,9 +10,11 @@ namespace UserService.WebApi.Controllers
     public class TransactionsController:BaseController
     {
         private readonly ITransactionService _service;
-        public TransactionsController(ITransactionService service)
+         private readonly IMessageBusClient _messageBusClient;
+        public TransactionsController(ITransactionService service,IMessageBusClient messageBusClient)
         {
             _service = service;
+            _messageBusClient=messageBusClient;
         }
 
         /// <summary>
@@ -23,7 +27,17 @@ namespace UserService.WebApi.Controllers
         public async Task<IActionResult> CreateTransaction(TransactionCreateModel model)
         {
             var result= await _service.CreateTransaction(model);
-            return CreatedAtAction(nameof(GetTransactionById),new {id=result.Id},result);
+            try
+            {
+                if(result!=null){
+                    _messageBusClient.PublishedUpdateOrder(new OrderUpdatePublishedModel{Id=model.OrderId});
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+            }
+            return CreatedAtAction(nameof(GetTransactionById),new {id=result!.Id},result);
         }
         /// <summary>
         /// Get All Transaction
@@ -40,6 +54,7 @@ namespace UserService.WebApi.Controllers
         /// Get Transaction by Id
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="paymentId"></param>
         /// <returns></returns>
         [Authorize]
         [HttpGet("{id}")]

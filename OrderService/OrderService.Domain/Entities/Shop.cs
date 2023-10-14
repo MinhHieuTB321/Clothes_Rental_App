@@ -16,6 +16,6 @@ namespace OrderService.Domain.Entities
         public string Status { get; set; } = default!;
         public Guid OwnerId { get; set; }
         public ICollection<Combo>? Combos { get; set; }
-        public ICollection<OrderDetail>? OrderDetails { get; set; }
+        public ICollection<Order>? Orders { get; set; }
     }
 }

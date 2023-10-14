@@ -13,6 +13,8 @@ using OrderService.Application.Services;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using OrderService.Application.Commons;
+using OrderService.Application.AsyncDataServices;
+using OrderService.Application.EventProcessing;
 
 namespace OrderService.Infrastructures
 {
@@ -20,7 +22,9 @@ namespace OrderService.Infrastructures
     {
         public static IServiceCollection AddInfrastructuresService(this IServiceCollection services, AppConfiguration appConfig)
         {
-
+            services.AddHostedService<MessageBusSubcriber>();
+            services.AddSingleton<IEventProcessor, EventProcessor>();
+            services.AddSingleton<IMessageBusClient, MessageBusClient>();
             #region DI_REPOSITORIES
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -28,12 +32,13 @@ namespace OrderService.Infrastructures
             services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
             services.AddScoped<IShopRepository, ShopRepository>();
             services.AddScoped<IComboRepository, ComboRepository>();
-            services.AddScoped<IFeeRepository, FeeRepository>();
             #endregion
 
             #region DI_SERVICES
             services.AddScoped<ICurrentTime, CurrentTime>();
+            services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IOrderService, Order_Service>();
+            services.AddScoped<IShopService, ShopService>();
             services.AddScoped<IOrderDetailService, OrderDetailService>();
             #endregion
             services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);

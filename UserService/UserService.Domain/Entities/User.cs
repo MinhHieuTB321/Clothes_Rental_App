@@ -2,7 +2,6 @@ namespace UserService.Domain.Entities
 {
     public class User:BaseEntity
     {
-        public Guid ExternalId{get;set;}
         public string Name{get;set;}=default!;
 
         public string Email{get;set;}=default!;

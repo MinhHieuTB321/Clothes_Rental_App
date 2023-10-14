@@ -30,6 +30,7 @@ namespace UserService.WebApi
             services.AddFluentValidationClientsideAdapters();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+            services.AddControllers();
 
              services.AddCors(options
                 => options.AddDefaultPolicy(policy

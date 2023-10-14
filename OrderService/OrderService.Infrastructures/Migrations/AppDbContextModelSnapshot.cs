@@ -126,52 +126,6 @@ namespace OrderService.Infrastructures.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("OrderService.Domain.Entities.Fee", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ComboId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeleteBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("Deposit")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModificationBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModificationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("RentalPrice")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ComboId");
-
-                    b.ToTable("Fees");
-                });
-
             modelBuilder.Entity("OrderService.Domain.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -184,8 +138,20 @@ namespace OrderService.Infrastructures.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CustomerAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerPhone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("DeleteBy")
                         .HasColumnType("uniqueidentifier");
@@ -203,11 +169,14 @@ namespace OrderService.Infrastructures.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ShopOwnerId")
+                    b.Property<Guid?>("ShopId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Total")
                         .HasColumnType("float");
@@ -215,6 +184,8 @@ namespace OrderService.Infrastructures.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("ShopId");
 
                     b.ToTable("Orders");
                 });
@@ -240,11 +211,11 @@ namespace OrderService.Infrastructures.Migrations
                     b.Property<DateTime?>("DeletionDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<double>("Deposit")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("FeeId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -255,15 +226,11 @@ namespace OrderService.Infrastructures.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Note")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ShopId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<double>("RentalPrice")
+                        .HasColumnType("float");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -273,11 +240,7 @@ namespace OrderService.Infrastructures.Migrations
 
                     b.HasIndex("ComboId");
 
-                    b.HasIndex("FeeId");
-
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("ShopId");
 
                     b.ToTable("OrderDetails");
                 });
@@ -352,17 +315,6 @@ namespace OrderService.Infrastructures.Migrations
                     b.Navigation("Shop");
                 });
 
-            modelBuilder.Entity("OrderService.Domain.Entities.Fee", b =>
-                {
-                    b.HasOne("OrderService.Domain.Entities.Combo", "Combo")
-                        .WithMany("Fees")
-                        .HasForeignKey("ComboId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Combo");
-                });
-
             modelBuilder.Entity("OrderService.Domain.Entities.Order", b =>
                 {
                     b.HasOne("OrderService.Domain.Entities.Customer", "Customer")
@@ -371,7 +323,14 @@ namespace OrderService.Infrastructures.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("OrderService.Domain.Entities.Shop", "Shop")
+                        .WithMany("Orders")
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Customer");
+
+                    b.Navigation("Shop");
                 });
 
             modelBuilder.Entity("OrderService.Domain.Entities.OrderDetail", b =>
@@ -382,48 +341,25 @@ namespace OrderService.Infrastructures.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("OrderService.Domain.Entities.Fee", "Fee")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("FeeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("OrderService.Domain.Entities.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OrderService.Domain.Entities.Shop", "Shop")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("ShopId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.Navigation("Combo");
 
-                    b.Navigation("Fee");
-
                     b.Navigation("Order");
-
-                    b.Navigation("Shop");
                 });
 
             modelBuilder.Entity("OrderService.Domain.Entities.Combo", b =>
                 {
-                    b.Navigation("Fees");
-
                     b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("OrderService.Domain.Entities.Customer", b =>
                 {
                     b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("OrderService.Domain.Entities.Fee", b =>
-                {
-                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("OrderService.Domain.Entities.Order", b =>
@@ -435,7 +371,7 @@ namespace OrderService.Infrastructures.Migrations
                 {
                     b.Navigation("Combos");
 
-                    b.Navigation("OrderDetails");
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

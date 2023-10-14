@@ -14,7 +14,6 @@ namespace OrderService.Application
         public IShopRepository ShopRepository { get; }
         public ICustomerRepository CustomerRepository { get; }
         public IComboRepository ComboRepository { get; }
-        public IFeeRepository FeeRepository { get; }
         public Task<bool> SaveChangesAsync();
     }
 }
