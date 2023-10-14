@@ -8,8 +8,6 @@ namespace ComboService.Domain.Entities
 {
     public class Combo : BaseEntity
     {
-        public Guid ComboId { get; set; } = default!;
-
         public string ComboName { get; set; } = default!;
         public int Quantity { get; set; } = default!;
         public string Status { get; set; } = default!;

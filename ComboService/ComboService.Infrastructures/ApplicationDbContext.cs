@@ -19,6 +19,9 @@ namespace ComboService.Infrastructures
         #region DbSet
         public DbSet<Combo> Combo { get; set; } = default!;
         public DbSet<PriceList> PriceList { get; set; } = default!;
+        public DbSet<ProductCombo> ProductCombo { get; set; } = default!;
+        public DbSet<Shop> Shop { get; set; } = default!;
+        public DbSet<Product> Product { get; set; } = default!;
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

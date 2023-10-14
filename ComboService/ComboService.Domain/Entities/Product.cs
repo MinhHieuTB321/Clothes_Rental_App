@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,6 @@ namespace ComboService.Domain.Entities
 {
     public class Product : BaseEntity
     {
-        public Guid ProductId { get; set; } = default!;
         public string ProductName { get; set; } = default!;
         public Guid RootProductId { get; set; } = default!;
         public Product RootProduct { get; set; } = default!;
@@ -22,7 +22,8 @@ namespace ComboService.Domain.Entities
 
 
         //Image
-        public ICollection<ProductImage> Images { get; set; } = default!;
+        [NotMapped]
+        public ICollection<string> Images { get; set; } = default!;
 
         //Category
         public Guid CategoryId { get; set; } = default!;
