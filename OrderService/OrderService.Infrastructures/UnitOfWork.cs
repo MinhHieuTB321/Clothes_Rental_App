@@ -16,7 +16,6 @@ namespace OrderService.Infrastructures
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IComboRepository _comboRepository;
         private readonly ICustomerRepository _customerRepository;
-        private readonly IFeeRepository _feeRepository;
         private readonly AppDbContext _appDbContext;
 
         public UnitOfWork(IShopRepository shopRepository,
@@ -24,8 +23,7 @@ namespace OrderService.Infrastructures
             IOrderDetailRepository orderDetailRepository,
             IComboRepository comboRepository,
             ICustomerRepository customerRepository,
-            AppDbContext appDbContext,
-            IFeeRepository feeRepository)
+            AppDbContext appDbContext)
         {
             _shopRepository = shopRepository;
             _orderRepository = orderRepository;
@@ -33,7 +31,6 @@ namespace OrderService.Infrastructures
             _comboRepository = comboRepository;
             _customerRepository = customerRepository;
             _appDbContext = appDbContext;
-            _feeRepository = feeRepository;
         }
 
         public IOrderRepository OrderRepository => _orderRepository;
@@ -46,7 +43,6 @@ namespace OrderService.Infrastructures
 
         public IComboRepository ComboRepository => _comboRepository;
 
-        public IFeeRepository FeeRepository => _feeRepository;
 
         public async Task<bool> SaveChangesAsync()
         {

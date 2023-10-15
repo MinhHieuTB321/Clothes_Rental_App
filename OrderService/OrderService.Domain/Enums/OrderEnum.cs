@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OrderService.Application.IRepositories
+namespace OrderService.Domain.Enums
 {
-    public interface IFeeRepository
+    public enum OrderEnum
     {
+        Paid,
+        Pending,
+        Cancel
     }
 }

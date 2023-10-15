@@ -33,14 +33,14 @@ namespace UserService.Infrastructures.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("DeleteBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeletionDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("ExternalId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -51,10 +51,7 @@ namespace UserService.Infrastructures.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("PayerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RecipientId")
+                    b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Total")
@@ -62,7 +59,7 @@ namespace UserService.Infrastructures.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PayerId");
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
                 });
@@ -81,6 +78,9 @@ namespace UserService.Infrastructures.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("DeleteBy")
                         .HasColumnType("uniqueidentifier");
@@ -106,7 +106,7 @@ namespace UserService.Infrastructures.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("PartyId")
+                    b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Status")
@@ -115,14 +115,13 @@ namespace UserService.Infrastructures.Migrations
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Payments");
                 });
@@ -199,9 +198,6 @@ namespace UserService.Infrastructures.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ExternalId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -276,32 +272,40 @@ namespace UserService.Infrastructures.Migrations
 
             modelBuilder.Entity("UserService.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("UserService.Domain.Entities.User", "Payer")
+                    b.HasOne("UserService.Domain.Entities.User", "Customer")
                         .WithMany("Orders")
-                        .HasForeignKey("PayerId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Payer");
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.Payment", b =>
                 {
+                    b.HasOne("UserService.Domain.Entities.User", "Customer")
+                        .WithMany("Payments")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("UserService.Domain.Entities.Order", "Order")
                         .WithMany("Payments")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("UserService.Domain.Entities.User", "User")
-                        .WithMany("Payments")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                    b.HasOne("UserService.Domain.Entities.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Customer");
 
                     b.Navigation("Order");
 
-                    b.Navigation("User");
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.Transaction", b =>

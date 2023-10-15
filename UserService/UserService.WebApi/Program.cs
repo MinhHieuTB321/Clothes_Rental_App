@@ -9,11 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
 var configuration = builder.Configuration.Get<AppConfiguration>();
-var databaseConnection= builder.Configuration["DatabaseConnection"];
-
-builder.Services.AddInfrastructuresService(databaseConnection!);
+var _env = builder.Environment;
+builder.Services.AddInfrastructuresService(configuration!);
 
 builder.Services.AddWebAPIService(configuration!);
 
@@ -45,4 +43,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+PrepDb.PrepPopulation(app, _env.IsProduction());
 app.Run();

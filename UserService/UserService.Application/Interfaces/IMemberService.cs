@@ -7,8 +7,9 @@ namespace UserService.Application.Interfaces
     public interface IMemberService
     {
         Task<List<UserReadModel>> GetAllUserByRole(string role);
-        Task<UserReadModel> GetUserById(Guid id);
-
-        Task<List<PaymentReadModel>> GetPaymentsByUserId(Guid id);
+        Task<UserReadModel> GetCustomerById(Guid id);
+        Task<UserReadModel> GetOwnerById(Guid id);
+        Task<List<PaymentReadModel>> GetPaymentsByCustomerId(Guid id);
+        Task<List<PaymentReadModel>> GetPaymentsByOwnerId(Guid id);
     }
 }

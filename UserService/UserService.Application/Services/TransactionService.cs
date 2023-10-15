@@ -23,24 +23,24 @@ namespace UserService.Application.Services
         public async Task<TransactionReadModel> CreateTransaction(TransactionCreateModel createModel)
         {
             //Add Transaction
-            var result = await AddTransactionForPayer(createModel);
-            if (result.Status==TransactionEnums.Error.ToString())
+            var result = await AddTransactionForCustomer(createModel);
+            if (result.Status==TransactionEnums.Success.ToString())
             {
-                await AddTransactionForParty(createModel);
+                await AddTransactionForOwner(createModel);
             }
             await _unitOfWork.SaveChangeAsync();
             return _mapper.Map<TransactionReadModel>(result);
         }
         // Add Transaction for Party
 
-        private async Task AddTransactionForParty(TransactionCreateModel createModel)
+        private async Task AddTransactionForOwner(TransactionCreateModel createModel)
         {
-            var payment = await AddPaymentForParty(createModel);
-            var wallet = await _unitOfWork.WalletRepository.FindByField(x => x.UserId == createModel.PartyId);
-            if (wallet == null) throw new NotFoundException($"Can not find wallet of user {createModel.PartyId}!");
+            var payment = await AddPaymentForOwner(createModel);
+            var wallet = await _unitOfWork.WalletRepository.FindByField(x => x.UserId == createModel.OwnerId);
+            if (wallet == null) throw new NotFoundException($"Can not find wallet of user {createModel.OwnerId}!");
             var tran = new Transaction
             {
-                Type=PaymentTypeEnums.Transfer.ToString(),
+                Type=PaymentTypeEnums.Receive.ToString(),
                 Amount = createModel.Amount,
                 PaymentId = payment.Id,
                 WalletId = wallet.Id
@@ -49,16 +49,17 @@ namespace UserService.Application.Services
             UpdateWallet(result, wallet,true);
         }
 
-        private async Task<Payment> AddPaymentForParty(TransactionCreateModel createModel)
+        private async Task<Payment> AddPaymentForOwner(TransactionCreateModel createModel)
         {
             var payment = _mapper.Map<Payment>(createModel);
-            payment.PartyId = _claimsService.GetCurrentUser;
+            payment.CustomerId = _claimsService.GetCurrentUser;
+            payment.Status=PaymentEnums.Success.ToString();
             payment.Type=PaymentTypeEnums.Receive.ToString();
             var result = await _unitOfWork.PaymentRepository.AddAsync(payment);
             return result;
         }
         // Add Transaction for Payer
-        private async Task<Transaction> AddTransactionForPayer(TransactionCreateModel createModel)
+        private async Task<Transaction> AddTransactionForCustomer(TransactionCreateModel createModel)
         {
             var flag = true;
             var paymentStatus= PaymentEnums.Success.ToString();
@@ -66,7 +67,7 @@ namespace UserService.Application.Services
             if (wallet == null) throw new NotFoundException($"Can not find wallet of user {_claimsService.GetCurrentUser}!");
             var tran = new Transaction
             {
-                Type = PaymentTypeEnums.Receive.ToString(),
+                Type = PaymentTypeEnums.Transfer.ToString(),
                 Amount = createModel.Amount,
                 PaymentId = createModel.PaymentId,
                 WalletId = wallet.Id
@@ -79,18 +80,17 @@ namespace UserService.Application.Services
             }
             var result = await _unitOfWork.TransactionRepository.AddAsync(tran);
             UpdateWallet(result, wallet,flag);
-            await  UpdatePaymentPayer(createModel.PaymentId, paymentStatus);
+            await UpdatePaymentCustomer(createModel.PaymentId, paymentStatus);
             return result;
         }
 
-        private async Task UpdatePaymentPayer(Guid id,string status)
+        private async Task UpdatePaymentCustomer(Guid id,string status)
         {
             var payment= await _unitOfWork.PaymentRepository.GetByIdAsync(id);
             if (payment == null) throw new NotFoundException($"Can not found payment {id}");
             payment!.Status= status;
             _unitOfWork.PaymentRepository.Update(payment);
         }
-        
 
         private void UpdateWallet(Transaction tran, Wallet wallet,bool isValid)
         {

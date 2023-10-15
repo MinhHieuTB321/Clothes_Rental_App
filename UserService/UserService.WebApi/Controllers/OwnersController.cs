@@ -34,14 +34,14 @@ namespace UserService.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCustomerById(Guid id)
         {
-            var result = await _service.GetUserById(id);
+            var result = await _service.GetOwnerById(id);
             return Ok(result);
         }
         [Authorize]
         [HttpGet("{id}/payments")]
         public async Task<IActionResult> GetPaymentsByUserId(Guid id)
         {
-            var result = await _service.GetPaymentsByUserId(id);
+            var result = await _service.GetPaymentsByOwnerId(id);
             return Ok(result);
         }
     }

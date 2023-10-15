@@ -21,7 +21,6 @@ namespace OrderService.Infrastructures
         public DbSet<OrderDetail> OrderDetails { get; set; } = default!;
         public DbSet<Shop> Shops { get; set; } = default!;
         public DbSet<Combo> Combos { get; set; } = default!;
-        public DbSet<Fee> Fees { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

@@ -12,9 +12,9 @@ namespace UserService.Infrastructures.FluentAPIs
 
             builder.Property(x=>x.Id).ValueGeneratedNever();
 
-            builder.HasOne(o=>o.Payer)
+            builder.HasOne(o=>o.Customer)
                 .WithMany(u=>u.Orders)
-                .HasForeignKey(o=>o.PayerId)
+                .HasForeignKey(o=>o.CustomerId)
                 .OnDelete(DeleteBehavior.NoAction);
             
             builder.HasMany(o=>o.Payments)

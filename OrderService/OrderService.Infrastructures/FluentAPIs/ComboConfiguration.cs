@@ -18,10 +18,6 @@ namespace OrderService.Infrastructures.FluentAPIs
                 .WithMany(x => x.Combos)
                 .HasForeignKey(x => x.ShopId);
 
-            builder.HasMany(x=>x.Fees)
-                .WithOne(x=>x.Combo)
-                .HasForeignKey(x=>x.ComboId)
-                .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasMany(x => x.OrderDetails)
                 .WithOne(x => x.Combo)

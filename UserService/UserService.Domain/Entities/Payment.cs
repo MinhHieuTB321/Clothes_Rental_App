@@ -11,9 +11,10 @@ namespace UserService.Domain.Entities
         public string? Note{get;set;}
         public Guid OrderId{get;set;}
         public Order? Order {get;set;}
-        public Guid PartyId{get;set;}
-        public Guid UserId{get;set;}
-        public User? User{get;set;}
+        public Guid OwnerId{get;set;}
+        public User? Owner { get; set; }
+        public Guid CustomerId{get;set;}
+        public User? Customer{get;set;}
         public ICollection<Transaction>? Transactions{get;set;}
     }
 }

@@ -1,4 +1,4 @@
-﻿using FluentValidation.AspNetCore;
+﻿    using FluentValidation.AspNetCore;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using OrderService.WebApi.Services;
 using OrderService.WebAPI.Middlewares;
+using Hangfire;
 
 namespace OrderService.WebApi
 {
@@ -82,6 +83,13 @@ namespace OrderService.WebApi
                     }
                 });
             });
+
+            services.AddHangfire(config => config
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseInMemoryStorage());
+
+            services.AddHangfireServer();
 
             return services;
         }

@@ -23,7 +23,7 @@ namespace UserService.Application.Services
         {
             var payments = await _unitOfWork
                 .PaymentRepository
-                .FindListByField(x => x.UserId == _claimsService.GetCurrentUser && x.OrderId==orderId, x => x.Transactions!, x => x.User!);
+                .FindListByField(x => x.CustomerId == _claimsService.GetCurrentUser && x.OrderId==orderId, x => x.Transactions!, x => x.Customer!);
             if (payments.Count == 0) throw new NotFoundException("Payments are not exist!");
             var result = _mapper.Map<List<PaymentReadModel>>(payments);
             return result;

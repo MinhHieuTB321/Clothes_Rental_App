@@ -23,7 +23,7 @@ namespace UserService.Application.Services
         public async Task<PaymentReadModel> CreatePayment(PaymentCreateModel createModel)
         {
             var payment= _mapper.Map<Payment>(createModel);
-            payment.UserId=_claimsService.GetCurrentUser;
+            payment.CustomerId=_claimsService.GetCurrentUser;
             payment = await _unitOfWork.PaymentRepository.AddAsync(payment);
             await _unitOfWork.SaveChangeAsync();
             var result= _mapper.Map<PaymentReadModel>(payment);
@@ -32,7 +32,7 @@ namespace UserService.Application.Services
 
         public async Task<List<PaymentReadModel>> GetAllPayments()
         {
-            var payments = await _unitOfWork.PaymentRepository.FindListByField(x=>x.UserId==_claimsService.GetCurrentUser,x => x.Transactions!);
+            var payments = await _unitOfWork.PaymentRepository.FindListByField(x=>x.CustomerId==_claimsService.GetCurrentUser,x => x.Transactions!);
             if (payments.Count==0) throw new NotFoundException("Payments are not exist!");
             var result = _mapper.Map<List<PaymentReadModel>>(payments);
             for (int i = 0; i < result.Count; i++)
@@ -44,21 +44,21 @@ namespace UserService.Application.Services
 
         private async Task<PaymentReadModel> GetPartyById(PaymentReadModel payment)
         {
-            var party = await _unitOfWork.UserRepository.GetByIdAsync(payment.PartyId);
-            if (party == null) throw new NotFoundException($"Party is not exist {payment.PartyId}");
-            payment.PartyName = party.Name;
+            var party = await _unitOfWork.UserRepository.GetByIdAsync(payment.OwnerId);
+            if (party == null) throw new NotFoundException($"Party is not exist {payment.OwnerId}");
+            payment.OwnerName = party.Name;
             payment.Phone = party.Phone;
             return payment;
         }
 
         public async Task<PaymentReadModel> GetPaymentById(Guid id)
         {
-            var payment = await _unitOfWork.PaymentRepository.FindByField(x => x.Id == id, x => x.Transactions!, x => x.User!);
+            var payment = await _unitOfWork.PaymentRepository.FindByField(x => x.Id == id, x => x.Transactions!, x => x.Customer!);
             if (payment == null) throw new NotFoundException("Payment is not exist!");
             var result = _mapper.Map<PaymentReadModel>(payment);
-            var party = await _unitOfWork.UserRepository.GetByIdAsync(payment.PartyId);
-            if (party == null) throw new NotFoundException($"Party is not exist {payment.PartyId}");
-            result.PartyName = party.Name;
+            var party = await _unitOfWork.UserRepository.GetByIdAsync(payment.OwnerId);
+            if (party == null) throw new NotFoundException($"Party is not exist {payment.OwnerId}");
+            result.OwnerName = party.Name;
             result.Phone = party.Phone;
             return result;
         }

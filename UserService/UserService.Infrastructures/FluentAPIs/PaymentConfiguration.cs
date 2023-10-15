@@ -15,9 +15,9 @@ namespace UserService.Infrastructures.FluentAPIs
                    .HasForeignKey(p=>p.OrderId)
                    .OnDelete(DeleteBehavior.NoAction);
             
-            builder.HasOne(p=>p.User)
+            builder.HasOne(p=>p.Customer)
                    .WithMany(u=>u.Payments)
-                   .HasForeignKey(p=>p.UserId)
+                   .HasForeignKey(p=>p.CustomerId)
                    .OnDelete(DeleteBehavior.NoAction);
             
             builder.HasMany(p=>p.Transactions)
