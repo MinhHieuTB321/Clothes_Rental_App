@@ -9,7 +9,7 @@ namespace ShopService.Domain.Entities
     public class Shop : BaseEntity
     {
         public string ShopName { get; set; } = default!;
-        public string ShopCode { get; set; } = default!;
+        public string ShopCode { get; set; } = Guid.NewGuid().ToString();
         public string ShopEmail { get; set; } = default!;
         public string ShopPhone { get; set; } = default!;
         public string Address { get; set; } = default!;

@@ -15,15 +15,11 @@ namespace ShopService.Application.Commons
     {
         //private static IConfiguration _configuration= new Configuration;
         // Vulnurable Data
-        /*private static string API_KEY = _configuration["FireBase:ApiKey"];
-        private static string Bucket = _configuration["FireBase:Bucket"];
-        private static string AuthEmail = _configuration["FireBase:AuthEmail"];
-        private static string AuthPassword = _configuration["FireBase:AuthPassword"];*/
         private static string API_KEY = "AIzaSyD8jIG3rxybg8_SsskVhiHV8K6dBOCgNvk";
         private static string Bucket = "clothes-rental-app.appspot.com";
         private static string AuthEmail = "admin1@gmail.com";
         private static string AuthPassword = "Admin@@";
-        public static async Task<FileUploadModel> UploadFileAsync(this IFormFile fileUpload)
+        public static async Task<FileUploadModel> UploadFileAsync(this IFormFile fileUpload,string folder)
         {
             if (fileUpload.Length > 0)
             {
@@ -38,7 +34,7 @@ namespace ShopService.Application.Commons
                         ThrowOnCancel = true
 
                     }
-                    ).Child("assets").Child(fileUpload.FileName)
+                    ).Child("assets/"+folder).Child(fileUpload.FileName)
                     .PutAsync(fs, CancellationToken.None);
                 try
                 {
@@ -60,7 +56,7 @@ namespace ShopService.Application.Commons
             else throw new Exception("File is not existed!");
         }
 
-        public static async Task<bool> RemoveFileAsync(this string fileName)
+        public static async Task<bool> RemoveFileAsync(this string fileName,string folder)
         {
             var auth = new FirebaseAuthProvider(new FirebaseConfig(API_KEY));
             var loginInfo = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
@@ -69,7 +65,7 @@ namespace ShopService.Application.Commons
                 AuthTokenAsyncFactory = () => Task.FromResult(loginInfo.FirebaseToken),
                 ThrowOnCancel = true
             });
-            await storage.Child("assets").Child(fileName).DeleteAsync();
+            await storage.Child("assets/"+folder).Child(fileName).DeleteAsync();
             return true;
 
         }

@@ -17,24 +17,43 @@ namespace ShopService.Infrastructures.Mapper
     {
         public MappperConfiguration()
         {
+            #region CATEGORY
             CreateMap<CategoryCreateModel, Category>().ReverseMap();
             CreateMap<CategoryReadModel, Category>().ReverseMap();
             CreateMap<CategoryUpdateModel, Category>().ReverseMap();
-
+            #endregion
+            
+            #region  IMAGE
             CreateMap<ImageCreateModel, ProductImage>().ReverseMap();
             CreateMap<ImageReadModel, ProductImage>().ReverseMap();
+            #endregion
 
+            #region  Owner
+            CreateMap<OwnerReadModel, OwnerPublishedModel>().ReverseMap();
             CreateMap<OwnerCreateModel, Owner>().ReverseMap();
             CreateMap<OwnerReadModel, Owner>().ReverseMap();
             CreateMap<OwnerUpdateModel, Owner>().ReverseMap();
+            #endregion
 
+            #region PRODUCT
             CreateMap<ProductCreateModel, Product>().ReverseMap();
-            CreateMap<ProductReadModel, Product>().ReverseMap();
+            CreateMap<ProductReadModel, Product>()
+                .ForPath(x=>x.Shop.ShopName,opt=>opt.MapFrom(x=>x.ShopName))
+                .ForPath(x => x.Category.CategoryName, opt => opt.MapFrom(x => x.CategoryName))
+                .ReverseMap();
             CreateMap<ProductUpdateModel, Product>().ReverseMap();
+            CreateMap<ProductReadModel, ProductPublishedModel>().ReverseMap();
+            #endregion
 
+            #region SHOP
+            CreateMap<ShopReadModel, ShopPublishedModel>().ReverseMap();
             CreateMap<ShopCreateModel, Shop>().ReverseMap();
-            CreateMap<ShopReadModel, Shop>().ReverseMap();
+            CreateMap<ShopReadModel, Shop>()
+                .ForPath(x=>x.Owner.Name,opt=>opt.MapFrom(x=>x.OwnerName))
+                .ReverseMap();
             CreateMap<ShopUpdateModel, Shop>().ReverseMap();
+
+            #endregion
         }
     }
 }

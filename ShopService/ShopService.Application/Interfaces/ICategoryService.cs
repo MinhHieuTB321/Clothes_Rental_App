@@ -1,4 +1,5 @@
 ﻿using ShopService.Application.ViewModels.Categories;
+using ShopService.Application.ViewModels.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,7 @@ namespace ShopService.Application.Interfaces
         Task<IEnumerable<CategoryReadModel>> GetAllAsync();
         Task<CategoryReadModel> GetByIdAsync(Guid id);
         Task<bool> DeleteCategory(Guid id);
+
+        Task<List<ProductReadModel>> GetAllProductByCateId(Guid id);
     }
 }

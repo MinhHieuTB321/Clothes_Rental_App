@@ -1,6 +1,4 @@
-﻿using ShopService.Application.ViewModels.Images;
-using ShopService.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShopService.Application.ViewModels.Products
 {
-    public class ProductReadModel
+    public class ProductPublishedModel
     {
         public Guid Id { get; set; }
         public string ProductName { get; set; } = default!;
@@ -22,12 +20,7 @@ namespace ShopService.Application.ViewModels.Products
         public Guid? RootProductId { get; set; } = default!;
 
         public Guid ShopId { get; set; } = default!;
-        public string ShopName {  get; set; } = default!;
-
         public Guid CategoryId { get; set; } = default!;
-        public string CategoryName { get; set; } = default!;
-
-        public ICollection<ProductReadModel>? SubProducts { get; set; }
-        public ICollection<ImageReadModel> ProductImages { get; set; } = default!;
+        public string? Event { get; set; } = "Product_Published";
     }
 }

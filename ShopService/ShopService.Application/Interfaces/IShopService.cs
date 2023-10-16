@@ -1,4 +1,5 @@
-﻿using ShopService.Application.ViewModels.Shops;
+﻿using ShopService.Application.ViewModels.Products;
+using ShopService.Application.ViewModels.Shops;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace ShopService.Application.Interfaces
         Task<bool> DeleteShop(Guid shopId);
         Task<IEnumerable<ShopReadModel>> GetAllAsync();
         Task<ShopReadModel> GetByIdAsync(Guid id);
+        Task<List<ProductReadModel>> GetAllProductByShopId(Guid shopId);
     }
 }

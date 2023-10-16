@@ -11,10 +11,12 @@ namespace ShopService.Application.Interfaces
 {
     public interface IProductService
     {
-        Task<Product> CreateProduct(ProductCreateModel productCreateModel);
-        Task<ProductReadModel> UpdateProduct(ProductUpdateModel productUpdateModel);
+        Task<ProductReadModel> CreateProduct(ProductCreateModel productCreateModel);
+        Task<bool> UpdateProduct(ProductUpdateModel productUpdateModel);
         Task<bool> DeleteProduct(Guid id);
         Task<IEnumerable<ProductReadModel>> GetAllAsync();
         Task<ProductReadModel> GetByIdAsync(Guid id);
+
+        Task<List<ProductReadModel>> GetAllSubProductByRootId(Guid id);
     }
 }

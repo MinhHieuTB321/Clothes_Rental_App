@@ -26,7 +26,7 @@ namespace ShopService.Application.Services
         }
         public async Task<ProductImage?> AddImageAsync(IFormFile file, Guid productId)
         {
-            var fireBaseFile = await file.UploadFileAsync();
+            var fireBaseFile = await file.UploadFileAsync("Product");
             if (fireBaseFile is not null)
             {
                 var productImage = new ProductImage()
@@ -48,7 +48,7 @@ namespace ShopService.Application.Services
             if (deletedItem != null)
             {
                 _unitOfWork.ProductImageRepository.SoftRemove(deletedItem);
-                var result = await deletedItem.FileName.RemoveFileAsync();
+                var result = await deletedItem.FileName.RemoveFileAsync("Product");
                 if (result) return true;
                 else throw new Exception("Remove File at Firebase occured");
             }

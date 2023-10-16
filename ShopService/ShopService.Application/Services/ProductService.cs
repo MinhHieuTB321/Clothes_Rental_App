@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using ShopService.Application.Commons;
+using ShopService.Application.GlobalExceptionHandling.Exceptions;
 using ShopService.Application.Interfaces;
 using ShopService.Application.ViewModels.Products;
 using ShopService.Domain.Entities;
@@ -23,15 +26,33 @@ namespace ShopService.Application.Services
             _currentUser = claimService.GetCurrentUser;
         }
 
-        public async Task<Product> CreateProduct(ProductCreateModel productCreateModel)
+        public async Task<ProductReadModel> CreateProduct(ProductCreateModel productCreateModel)
         {
             var map = _mapper.Map<Product>(productCreateModel);
-            await _unitOfWork.ProductRepository.AddAsync(map);
+            var result = await _unitOfWork.ProductRepository.AddAsync(map);
+            await AddImageAsync(productCreateModel.File!,result.Id);
             if (!await _unitOfWork.SaveChangeAsync()) throw new Exception("There is an error in the system.");
-            return map;
+            return _mapper.Map<ProductReadModel>(result);
 
         }
-
+        public async Task AddImageAsync(IEnumerable<IFormFile> files, Guid productId)
+        {
+           foreach (var item in files)
+           {
+                var fireBaseFile = await item.UploadFileAsync("Product");
+                if (fireBaseFile is not null)
+                {
+                    var productImage = new ProductImage()
+                    {
+                        FileName = fireBaseFile.FileName,
+                        FileUrl = fireBaseFile.URL,
+                        ProductId = productId
+                    };
+                    await _unitOfWork.ProductImageRepository.AddAsync(productImage);
+                }
+           }
+        }
+        
         public async Task<bool> DeleteProduct(Guid id)
         {
             var product=await _unitOfWork.ProductRepository.GetByIdAsync(id);
@@ -42,18 +63,32 @@ namespace ShopService.Application.Services
         }
 
         public async Task<IEnumerable<ProductReadModel>> GetAllAsync()
-        => _mapper.Map<IEnumerable<ProductReadModel>>(await _unitOfWork.ProductRepository.GetAllAsync());
+        {
+            
+            var result = _mapper.Map<IEnumerable<ProductReadModel>>(await _unitOfWork.ProductRepository.FindListByField(x=>x.RootProductId==null&& x.IsDeleted==false,x=>x.ProductImages,x=>x.Shop,x=>x.Category));
+            return result;
+        }
 
         public async Task<ProductReadModel> GetByIdAsync(Guid id)
-        => _mapper.Map<ProductReadModel>(await _unitOfWork.ProductRepository.GetByIdAsync(id));
+        {
+            var result = _mapper.Map<ProductReadModel>(await _unitOfWork.ProductRepository.GetByIdAsync(id, x => x.ProductImages, x => x.Shop, x => x.Category,x=>x.SubProducts!));
+            return result;
+        }
 
-        public async Task<ProductReadModel> UpdateProduct(ProductUpdateModel productUpdateModel)
+        public async Task<bool> UpdateProduct(ProductUpdateModel productUpdateModel)
         {
             var product=await _unitOfWork.ProductRepository.GetByIdAsync(productUpdateModel.Id);
             if (product is null || product.Shop.OwnerId!=_currentUser) throw new Exception("There is no product to update.");
             _mapper.Map(productUpdateModel,product);
             _unitOfWork.ProductRepository.Update(product);
-            return await _unitOfWork.SaveChangeAsync()? _mapper.Map<ProductReadModel>(product): null;
+            return await _unitOfWork.SaveChangeAsync();
+        }
+
+        public async Task<List<ProductReadModel>> GetAllSubProductByRootId(Guid id)
+        {
+            var result = _mapper.Map<List<ProductReadModel>>(await _unitOfWork.ProductRepository.FindListByField(x=>x.RootProductId==id&& x.IsDeleted==false,x=>x.ProductImages,x=>x.Shop,x=>x.Category));
+            if(result.Count==0) throw new NotFoundException($"There are no sub-product for Id-{id}!");
+            return result;
         }
     }
 }

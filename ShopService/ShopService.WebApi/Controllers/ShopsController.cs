@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ShopService.Application.Interfaces;
 using ShopService.Application.ViewModels.Shops;
+using ShopService.Domain.Enum;
 using System.Net.WebSockets;
 
 namespace ShopService.WebApi.Controllers
@@ -8,10 +10,14 @@ namespace ShopService.WebApi.Controllers
     public class ShopsController : BaseController
     {
         private readonly IShopService _service;
-        public ShopsController(IShopService service)
+        private readonly IMessageBusClient _messageBusClient;
+        public ShopsController(IShopService service, IMessageBusClient messageBusClient)
         {
             _service = service;
+            _messageBusClient = messageBusClient;
         }
+
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllShop()
         {
@@ -19,6 +25,7 @@ namespace ShopService.WebApi.Controllers
             if (result is null) return BadRequest();
             return Ok(result);
         }
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetShopById(Guid id)
         {
@@ -26,26 +33,55 @@ namespace ShopService.WebApi.Controllers
             if (result is null) return BadRequest();
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpGet("{id}/products")]
+        public async Task<IActionResult> GetAllProductByShopId(Guid id)
+        {
+            var result = await _service.GetAllProductByShopId(id);
+            if (result is null) return BadRequest();
+            return Ok(result);
+        }
+
+        [Authorize(Roles =("Admin,Owner"))]
         [HttpDelete("{id}")]
         public async Task<IActionResult>DeleteShop(Guid Id)
         {
             var result = await _service.DeleteShop(Id);
             if(!result) return BadRequest();
-            return Ok(result);
+            return NoContent();
         }
 
+        [Authorize(Roles = ("Admin,Owner"))]
         [HttpPost]
         public async Task<IActionResult> CreateShop([FromForm] ShopCreateModel model)
         {
             var result= await _service.CreateShop(model);
-            if(result is not null) return Ok(result);
+            if(result is not null)
+            {
+                try
+                {
+                    if (result != null)
+                    {
+                        _messageBusClient.PublishedNewShop(result);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+                }
+                return CreatedAtAction(nameof(GetShopById), new { id = result!.Id }, result);
+            }
             return BadRequest();
         }
-        [HttpPut]
-        public async Task<IActionResult> UpdateShop([FromForm] ShopUpdateModel model)
+
+        [Authorize(Roles = ("Admin,Owner"))]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateShop(Guid id,[FromForm] ShopUpdateModel model)
         {
+            if(id!=model.Id) return BadRequest();
             var result= await _service.UpdateShop(model);
-            if(result is not null) return Ok( result);
+            if(result is not null) return NoContent();
             return BadRequest();
         }
     }

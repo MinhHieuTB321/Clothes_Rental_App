@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using ShopService.Application.Commons;
+using ShopService.Application.GlobalExceptionHandling.Exceptions;
 using ShopService.Application.Interfaces;
+using ShopService.Application.ViewModels.Products;
 using ShopService.Application.ViewModels.Shops;
 using ShopService.Domain.Entities;
 using System;
@@ -28,7 +30,7 @@ namespace ShopService.Application.Services
         {
             var map = _mapper.Map<Shop>(shopCreateModel);
             map.OwnerId= _currentUser;
-            var shopLogo = await shopCreateModel.File.UploadFileAsync();
+            var shopLogo = await shopCreateModel.File.UploadFileAsync("Shop");
             if(shopLogo != null)
             {
                 map.FileUrl = shopLogo.URL;
@@ -48,17 +50,28 @@ namespace ShopService.Application.Services
         }
 
         public async Task<IEnumerable<ShopReadModel>> GetAllAsync()
-            => _mapper.Map<IEnumerable<ShopReadModel>>(await _unitOfWork.ShopRepository.GetAllAsync(x=>x.OwnerId==_currentUser));
+            => _mapper.Map<IEnumerable<ShopReadModel>>(await _unitOfWork.ShopRepository.FindListByField(x=>x.OwnerId==_currentUser,x=>x.Owner));
+
+        public async Task<List<ProductReadModel>> GetAllProductByShopId(Guid shopId)
+        {
+           var result= await _unitOfWork.ProductRepository.FindListByField(x=>
+                                        x.ShopId==shopId &&
+                                        x.IsDeleted==false &&
+                                        x.RootProduct==null,
+                                        x=>x.Category,x=>x.ProductImages,x=>x.Shop);
+            if(result.Count==0) throw new NotFoundException("There are no products in shop!");
+            return _mapper.Map<List<ProductReadModel>>(result);
+        }
 
         public async Task<ShopReadModel> GetByIdAsync(Guid id)
-            => _mapper.Map<ShopReadModel>(await _unitOfWork.ShopRepository.GetByIdAsync(id));
+            => _mapper.Map<ShopReadModel>(await _unitOfWork.ShopRepository.GetByIdAsync(id,x=>x.Owner));
 
         public async Task<ShopReadModel> UpdateShop(ShopUpdateModel shopUpdateModel)
         {
             var shop = await _unitOfWork.ShopRepository.GetByIdAsync(shopUpdateModel.Id);
             if (shop is null || shop.OwnerId!=_currentUser) throw new Exception("There any shop to update.");
             _mapper.Map(shopUpdateModel, shop);
-            var shopLogo = await shopUpdateModel.File.UploadFileAsync();
+            var shopLogo = await shopUpdateModel.File.UploadFileAsync("Shop");
             if (shopLogo != null)
             {
                 shop.FileUrl = shopLogo.URL;

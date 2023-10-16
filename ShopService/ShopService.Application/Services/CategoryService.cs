@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using ShopService.Application.GlobalExceptionHandling.Exceptions;
 using ShopService.Application.Interfaces;
 using ShopService.Application.ViewModels.Categories;
+using ShopService.Application.ViewModels.Products;
 using ShopService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -47,6 +49,17 @@ namespace ShopService.Application.Services
 
         public async Task<IEnumerable<CategoryReadModel>> GetAllAsync() =>
             _mapper.Map<IEnumerable<CategoryReadModel>>(await _unitOfWork.CategoryRepository.GetAllAsync());
+
+        public async Task<List<ProductReadModel>> GetAllProductByCateId(Guid id)
+        {
+             var result= await _unitOfWork.ProductRepository.FindListByField(x=>
+                                        x.CategoryId==id &&
+                                        x.IsDeleted==false &&
+                                        x.RootProduct==null,
+                                        x=>x.Category,x=>x.ProductImages,x=>x.Shop);
+            if(result.Count==0) throw new NotFoundException("There are no products in shop!");
+            return _mapper.Map<List<ProductReadModel>>(result);
+        }
 
         public async Task<CategoryReadModel> GetByIdAsync(Guid id)
             => _mapper.Map<CategoryReadModel>(await _unitOfWork.CategoryRepository.GetByIdAsync(id));

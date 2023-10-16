@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
+using ShopService.Application.GlobalExceptionHandling.Exceptions;
 using ShopService.Application.Interfaces;
 using ShopService.Application.Utils;
 using ShopService.Application.ViewModels.Owners;
+using ShopService.Application.ViewModels.Shops;
 using ShopService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NotImplementedException = ShopService.Application.GlobalExceptionHandling.Exceptions.NotImplementedException;
 
 namespace ShopService.Application.Services
 {
@@ -51,6 +54,12 @@ namespace ShopService.Application.Services
         public async Task<IEnumerable<OwnerReadModel>> GetAllAsync()
             => _mapper.Map<IEnumerable<OwnerReadModel>>(await _unitOfWork.OwnerRepository.GetAllAsync());
 
+        public async Task<List<ShopReadModel>> GetAllShopByOwnerId(Guid ownerId)
+        {
+            var result= await _unitOfWork.ShopRepository.FindListByField(x=>x.OwnerId==ownerId&& x.IsDeleted==false,x=>x.Owner);
+            return _mapper.Map<List<ShopReadModel>>(result);
+        }
+
         public async Task<OwnerReadModel> GetByIdAsync(Guid id)
             => _mapper.Map<OwnerReadModel>(await _unitOfWork.OwnerRepository.GetByIdAsync(id));
 
@@ -64,9 +73,5 @@ namespace ShopService.Application.Services
             return _mapper.Map<OwnerReadModel>(owner);
         }
 
-        public Task<bool> UpdateStatusOwner(OwnerUpdateStatusModel ownerUpdateStatusModel)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

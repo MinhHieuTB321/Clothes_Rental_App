@@ -116,11 +116,14 @@ namespace ShopService.Infrastructures.Repositories
         }
 
         public async Task<TEntity> FindByField(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes)
-        => await includes
+        {
+            var result=await includes
            .Aggregate(_dbSet!.AsQueryable()!,
                (entity, property) => entity!.Include(property)).AsNoTracking()
            .Where(expression!)
             .FirstOrDefaultAsync(x => x.IsDeleted == false);
+            return result!;
+        }
 
         public async Task<List<TEntity>> FindListByField(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes)
         => await includes

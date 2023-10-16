@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-
+var _env = builder.Environment;
 var configuration = builder.Configuration.Get<AppConfiguration>();
 builder.Services.AddServices(builder.Configuration.GetConnectionString("ClothesRentalDB")!);
 builder.Services.AddWebAPIService(configuration!);
@@ -28,11 +28,12 @@ app.UseCors();
 app.UseMiddleware(typeof(GlobalErrorHandlingMiddleware));
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseMiddleware<PerformanceMiddleware>();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
+PrepDb.PrepPopulation(app, _env.IsProduction());
 app.Run();

@@ -15,6 +15,7 @@ namespace ShopService.Infrastructures
         public static IServiceCollection AddServices(this IServiceCollection services, string connectionString)
         {
 
+            services.AddScoped<IMessageBusClient, MessageBusClient>();
             #region DI_REPOSITORIES
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IOwnerRepository, OwnerRepository>();
