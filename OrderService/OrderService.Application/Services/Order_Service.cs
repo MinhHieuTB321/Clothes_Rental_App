@@ -48,6 +48,12 @@ namespace OrderService.Application.Services
         //    _client = new FireSharp.FirebaseClient(_fireBaseConfig);
         //}
 
+        public async Task<List<OrderReadModel>> GetAllOrderyShopId(Guid shopId)
+        {
+            var orders = await _unitOfWork.OrderRepository.FindListByField(x => x.ShopId == shopId&&x.IsDeleted==false, x => x.Customer, x => x.Shop!);
+            if (orders.Count == 0) throw new NotFoundException("There are no orders exist!");
+            return _mapper.Map<List<OrderReadModel>>(orders);
+        }
 
         public Order_Service(IUnitOfWork unitOfWork,
             IMapper mapper,

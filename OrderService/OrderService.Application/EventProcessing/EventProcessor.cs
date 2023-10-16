@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OrderService.Application.ViewModels;
 using OrderService.Application.ViewModels.Customers;
 using OrderService.Application.ViewModels.Orders;
+using OrderService.Application.ViewModels.Shops;
 using OrderService.Domain.Entities;
 using OrderService.Domain.Enums;
 using System;
@@ -17,6 +18,7 @@ namespace OrderService.Application.EventProcessing
     enum EventType
     {
         OrderUpdatePublished,
+        ShopPublished,
         Undetermined
     }
     public class EventProcessor : IEventProcessor
@@ -39,8 +41,33 @@ namespace OrderService.Application.EventProcessing
                 case EventType.OrderUpdatePublished:
                     await UpdateOrder(message);
                     break;
+                case EventType.ShopPublished:
+                    await AddShop(message);
+                    break;
                 default:
                     break;
+            }
+        }
+
+        private async Task AddShop(string message)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var shopCreateModel = JsonSerializer.Deserialize<ShopCreateModel>(message);
+
+                try
+                {
+                    var shop = _mapper.Map<Shop>(shopCreateModel);
+                    await unitOfWork.ShopRepository.AddAsync(shop);
+                    await unitOfWork.SaveChangesAsync();
+                    Console.WriteLine($"--> Order updated!");
+                    
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Could not update order to Db {ex.Message}");
+                }
             }
         }
 
@@ -88,6 +115,9 @@ namespace OrderService.Application.EventProcessing
                 case "OrderUpdate_Published":
                     Console.WriteLine("-->Order Update Published Event Detected");
                     return EventType.OrderUpdatePublished;
+                case "Shop_Published":
+                    Console.WriteLine("-->Shop Published Event Detected");
+                    return EventType.ShopPublished;
                 default:
                     Console.WriteLine("--> Could not determine the event type");
                     return EventType.Undetermined;

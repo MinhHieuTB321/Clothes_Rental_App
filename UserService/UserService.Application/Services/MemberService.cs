@@ -5,6 +5,8 @@ using UserService.Application.Interfaces;
 using UserService.Application.ViewModels.Payments;
 using UserService.Application.ViewModels.Users;
 using UserService.Domain.Entities;
+using UserService.Domain.Enums;
+using NotImplementedException = UserService.Application.GlobalExceptionHandling.Exceptions.NotImplementedException;
 
 namespace UserService.Application.Services
 {
@@ -90,6 +92,22 @@ namespace UserService.Application.Services
                 result[i] = await GetOwnertyById(result[i]);
             }
             return result;
+        }
+
+        public async Task<List<PaymentReadModel>> GetPaymentsByUserId(Guid id)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+            var result = new List<PaymentReadModel>();
+            if (user == null) throw new NotFoundException($"User with Id-{id} is not exist!");
+            switch (user.Role)
+            {
+                case nameof(RoleEnums.Customer):
+                    return await GetPaymentsByCustomerId(id); 
+                case nameof(RoleEnums.Owner):
+                    return await GetPaymentsByOwnerId(id);
+                default:
+                    throw new NotImplementedException("");
+            }
         }
     }
 }

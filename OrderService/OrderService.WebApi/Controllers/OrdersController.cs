@@ -18,8 +18,9 @@ namespace OrderService.WebApi.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetOrder( )
+        public async Task<IActionResult> GetOrder(Guid? shopId)
         {
+            if(shopId!=null)return Ok(await _service.GetAllOrderyShopId(shopId.Value));
             var result = await _service.GetAllOrders();
             return Ok(result);
         }

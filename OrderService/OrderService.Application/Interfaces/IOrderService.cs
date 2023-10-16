@@ -16,5 +16,6 @@ namespace OrderService.Application.Interfaces
         Task<bool> UpdateOrder(OrderUpdateModel model);
         Task<bool> DeleteOrder(Guid id);
         Task<List<OrderDetailReadModel>> GetOrderDetailByOrderId(Guid id);
+        Task<List<OrderReadModel>> GetAllOrderyShopId(Guid shopId);
     }
 }

@@ -11,5 +11,6 @@ namespace UserService.Application.Interfaces
         Task<UserReadModel> GetOwnerById(Guid id);
         Task<List<PaymentReadModel>> GetPaymentsByCustomerId(Guid id);
         Task<List<PaymentReadModel>> GetPaymentsByOwnerId(Guid id);
+        Task<List<PaymentReadModel>> GetPaymentsByUserId(Guid id);
     }
 }

@@ -17,6 +17,7 @@ namespace UserService.Application.EventProcessing
     {
         OrderPublished,
         CustomerPublished,
+        OwnerPublished,
         Undetermined
     }
     public class EventProcessor:IEventProcessor
@@ -42,8 +43,35 @@ namespace UserService.Application.EventProcessing
                 case EventType.CustomerPublished:
                     await AddCustomer(message);
                     break;
+                case EventType.OwnerPublished:
+                    await AddOwner(message);
+                    break;
                 default:
                     break;
+            }
+        }
+
+        private async Task AddOwner(string message)
+        {
+            using(var scope= _scopeFactory.CreateScope())
+            {
+                var unitOfWork= scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var ownerPublishedModel = JsonSerializer.Deserialize<OwnerPublishedModel>(message);
+
+                try
+                {   
+                    var user= _mapper.Map<User>(ownerPublishedModel);
+                    if(await unitOfWork.UserRepository.GetByIdAsync(user.Id) ==null)
+                    {
+                        await unitOfWork.UserRepository.AddAsync(user);
+                        await unitOfWork.SaveChangeAsync();
+                        Console.WriteLine($"--> user added!");
+                    }
+                }   
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"--> Could not add user to Db {ex.Message}");
+                }
             }
         }
 
@@ -109,6 +137,9 @@ namespace UserService.Application.EventProcessing
                 case "Customer_Published":
                     Console.WriteLine("-->Customer Published Event Detected");
                     return EventType.CustomerPublished;
+                case "Owner_Published":
+                    Console.WriteLine("-->Owner Published Event Detected");
+                    return EventType.OwnerPublished;
                 default:
                     Console.WriteLine("--> Could not determine the event type");
                     return EventType.Undetermined;

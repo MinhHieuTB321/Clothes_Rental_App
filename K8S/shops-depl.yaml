@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shops-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopservice
+  template:
+    metadata:
+      labels:
+        app: shopservice
+    spec:
+      containers:
+        - name: shopservice
+          image: minhhieutb321/shopservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shops-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: shopservice
+  ports:
+  - name: shopservice
+    protocol: TCP
+    port: 80
+    targetPort: 80 

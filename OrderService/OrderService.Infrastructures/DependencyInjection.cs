@@ -1,14 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using OrderService.Application.Interfaces;
 using OrderService.Application.IRepositories;
 using OrderService.Application;
 using OrderService.Infrastructures.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OrderService.Application.Services;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;

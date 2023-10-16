@@ -2,6 +2,7 @@
 using OrderService.Application.ViewModels.Customers;
 using OrderService.Application.ViewModels.OrderDetails;
 using OrderService.Application.ViewModels.Orders;
+using OrderService.Application.ViewModels.Shops;
 using OrderService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,9 @@ namespace OrderService.Infrastructures.Mappers
             CreateMap<OrderDetailCreateModel, OrderDetail>().ReverseMap();
             CreateMap<OrderDetailFirebase, OrderDetail>()
                 .ReverseMap();
+            #endregion
+            #region  SHOP
+            CreateMap<ShopCreateModel,Shop>().ReverseMap();
             #endregion
         }
     }
