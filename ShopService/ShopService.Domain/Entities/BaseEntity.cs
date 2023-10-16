@@ -5,12 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShopService.Domain
+namespace ShopService.Domain.Entities
 {
     public abstract class BaseEntity
     {
-        [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; }=Guid.NewGuid();
 
         public DateTime CreationDate { get; set; } = DateTime.Now;
 

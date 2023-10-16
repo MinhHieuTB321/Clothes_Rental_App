@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ShopService.Domain;
+using ShopService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +10,14 @@ using System.Threading.Tasks;
 
 namespace ShopService.Infrastructures.FluentAPIs
 {
-    public class OwnerConfiguration : IEntityTypeConfiguration<OwnerEntity>
+    public class OwnerConfiguration : IEntityTypeConfiguration<Owner>
     {
-        public void Configure(EntityTypeBuilder<OwnerEntity> builder)
+        public void Configure(EntityTypeBuilder<Owner> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).HasDefaultValueSql("NEWID()");
-            builder.Property(x => x.Name).HasMaxLength(100);
-            builder.Property(x => x.CreationDate).HasDefaultValueSql("getutcdate()");
             builder.HasIndex(o => o.Email).IsUnique();
-            //builder.HasIndex(u => u.Phone).IsUnique();
-            builder.HasMany(u => u.Shops).WithOne(o=>o.Owner).HasForeignKey(x=>x.Id);
+            builder.HasIndex(u => u.Phone).IsUnique();
+            builder.HasMany(u => u.Shops).WithOne(o=>o.Owner).HasForeignKey(x=>x.OwnerId);
         }
     }
 }

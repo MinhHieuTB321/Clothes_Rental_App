@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ShopService.Domain;
+using ShopService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +17,11 @@ namespace ShopService.Infrastructures
 
         }
         #region DbSet
-        public DbSet<ShopEntity> Shop { get; set; }
-        public DbSet<OwnerEntity> Owner { get; set; }
-        public DbSet<CategoryEntity> Category { get; set; }
-        public DbSet<ProductEnity> Product { get; set; }
-        public DbSet<ProductImageEntity> ProductImages { get; set; }
+        public DbSet<Shop> Shop { get; set; }
+        public DbSet<Owner> Owner { get; set; }
+        public DbSet<Category> Category { get; set; }
+        public DbSet<Product> Product { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
         #endregion
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

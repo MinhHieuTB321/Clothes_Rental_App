@@ -1,14 +1,18 @@
+using ShopService.Application.Commons;
+using ShopService.Application.GlobalExceptionHandling.Utility;
 using ShopService.Infrastructures;
+using ShopService.WebApi;
+using ShopService.WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
-builder.Services.AddServices(builder.Configuration.GetConnectionString("ClothesRentalDB"));
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+var _env = builder.Environment;
+var configuration = builder.Configuration.Get<AppConfiguration>();
+builder.Services.AddServices(builder.Configuration.GetConnectionString("ClothesRentalDB")!);
+builder.Services.AddWebAPIService(configuration!);
+
 //
 var app = builder.Build();
 
@@ -19,10 +23,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors();
 
+app.UseMiddleware(typeof(GlobalErrorHandlingMiddleware));
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<PerformanceMiddleware>();
+//app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
+PrepDb.PrepPopulation(app, _env.IsProduction());
 app.Run();

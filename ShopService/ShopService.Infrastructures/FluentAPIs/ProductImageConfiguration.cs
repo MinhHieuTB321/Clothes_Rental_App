@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ShopService.Domain;
+using ShopService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +9,13 @@ using System.Threading.Tasks;
 
 namespace ShopService.Infrastructures.FluentAPIs
 {
-    public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImageEntity>
+    public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage>
     {
-        public void Configure(EntityTypeBuilder<ProductImageEntity> builder)
+        public void Configure(EntityTypeBuilder<ProductImage> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).HasDefaultValueSql("NEWID()");
-            //builder.Property(x => x.ProductImageUrl).HasMaxLength();
-            builder.Property(x => x.CreationDate).HasDefaultValueSql("getutcdate()");
-            builder.Property(x => x.IsDeleted).HasDefaultValue("False");
+            builder.HasOne(x => x.Product).WithMany(x => x.ProductImages).HasForeignKey(x => x.ProductId);
+
         }
     }
 }
