@@ -4,10 +4,15 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>1b8646a7-d10f-46d1-b217-005ec2ca9151</UserSecretsId>
+		<DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="11.7.1" />
+		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">

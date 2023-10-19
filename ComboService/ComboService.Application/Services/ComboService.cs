@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using ComboService.Application.GlobalExceptionHandling;
 using ComboService.Application.Interfaces;
-using ComboService.Application.ViewModels.ComboViewModel.Request;
-using ComboService.Application.ViewModels.ComboViewModel.Response;
+using ComboService.Application.ViewModels.Request;
+using ComboService.Application.ViewModels.Response;
 using ComboService.Domain.Entities;
 using ComboService.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -111,7 +111,7 @@ namespace ComboService.Application.Services
 
         public async Task<IEnumerable<ComboResponseModel>> GetCombos()
         {
-           var combos = _unitOfWork.Repository<Combo>().GetAll().ToList();
+           var combos = _unitOfWork.Repository<Combo>().GetAll().Include(x => x.ProductCombos).ToList();
             if (combos.Count > 0)
             {
                 combos = combos.OrderByDescending(x => x.CreationDate).ToList();

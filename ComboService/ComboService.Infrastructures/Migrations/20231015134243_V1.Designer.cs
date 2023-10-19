@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ComboService.Infrastructures.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231013134317_DataForCombo")]
-    partial class DataForCombo
+    [Migration("20231015134243_V1")]
+    partial class V1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,19 +74,6 @@ namespace ComboService.Infrastructures.Migrations
                     b.HasIndex("ShopId");
 
                     b.ToTable("Combo");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("3458fc6a-42b6-4d27-93de-53e40b900670"),
-                            ComboName = "Combo Dự Tiệc Cuối Năm",
-                            CreationDate = new DateTime(2023, 10, 13, 20, 43, 17, 148, DateTimeKind.Local).AddTicks(6569),
-                            IsDeleted = false,
-                            Quantity = 5,
-                            ShopId = new Guid("a8447a39-91eb-41d6-b872-bdc2ffd89af4"),
-                            Status = "Active",
-                            TotalValue = 7300000m
-                        });
                 });
 
             modelBuilder.Entity("ComboService.Domain.Entities.PriceList", b =>
@@ -188,7 +175,7 @@ namespace ComboService.Infrastructures.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("RootProductId")
+                    b.Property<Guid?>("RootProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Size")
@@ -335,10 +322,9 @@ namespace ComboService.Infrastructures.Migrations
             modelBuilder.Entity("ComboService.Domain.Entities.Product", b =>
                 {
                     b.HasOne("ComboService.Domain.Entities.Product", "RootProduct")
-                        .WithMany()
+                        .WithMany("ChildProducts")
                         .HasForeignKey("RootProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("RootProduct");
                 });
@@ -353,9 +339,7 @@ namespace ComboService.Infrastructures.Migrations
 
                     b.HasOne("ComboService.Domain.Entities.Product", "Product")
                         .WithMany("ProductCombos")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
                     b.Navigation("Combo");
 
@@ -371,6 +355,8 @@ namespace ComboService.Infrastructures.Migrations
 
             modelBuilder.Entity("ComboService.Domain.Entities.Product", b =>
                 {
+                    b.Navigation("ChildProducts");
+
                     b.Navigation("ProductCombos");
                 });
 

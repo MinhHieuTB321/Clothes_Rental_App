@@ -27,25 +27,6 @@ namespace ComboService.Infrastructures
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
-            //#region Data Combo
-            //modelBuilder.Entity<Combo>().HasData
-            //(
-            //    new Combo
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        ShopId = Guid.NewGuid(),
-            //        ComboName = "Combo Dự Tiệc Cuối Năm",
-            //        Quantity = 5,
-            //        Status = "Active",
-            //        TotalValue = 7300000,
-                    
-            //    }
-            //);
-            //#endregion
-            //#region Data PriceList
-            //#endregion
-
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using ComboService.Application.Interfaces;
-using ComboService.Application.ViewModels.ComboViewModel.Request;
-using ComboService.Application.ViewModels.ComboViewModel.Response;
+using ComboService.Application.ViewModels.Request;
+using ComboService.Application.ViewModels.Response;
+using ComboService.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComboService.WebApi.Controllers
@@ -37,6 +39,7 @@ namespace ComboService.WebApi.Controllers
         /// <summary>
         /// Create priceList
         /// </summary>
+        [Authorize(Roles = nameof(RoleEnum.Owner))]
         [HttpPost]
         public async Task<ActionResult<IEnumerable<PriceListResponseModel>>> CreatePriceList([FromBody] CreatePriceListRequestModel request)
         {
@@ -47,6 +50,7 @@ namespace ComboService.WebApi.Controllers
         /// <summary>
         /// Update pricelisst
         /// </summary>
+        [Authorize(Roles = nameof(RoleEnum.Owner))]
         [HttpPut("{id}")]
         public async Task<ActionResult<PriceListResponseModel>> UpdatePriceList(Guid id, [FromBody] UpdatePriceListRequestModel request)
         {
@@ -57,6 +61,7 @@ namespace ComboService.WebApi.Controllers
         /// <summary>
         /// Delete Price
         /// </summary>
+        [Authorize(Roles = nameof(RoleEnum.Owner))]
         [HttpDelete("{id}")]
         public async Task<ActionResult<PriceListResponseModel>> DeleteCombo(Guid id)
         {

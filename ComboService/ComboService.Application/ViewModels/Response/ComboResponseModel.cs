@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComboService.Application.ViewModels.ComboViewModel.Response
+namespace ComboService.Application.ViewModels.Response
 {
     public class ComboResponseModel
     {

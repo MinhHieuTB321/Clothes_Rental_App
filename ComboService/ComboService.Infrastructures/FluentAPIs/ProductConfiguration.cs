@@ -15,7 +15,13 @@ namespace ComboService.Infrastructures.FluentAPIs
         {
             builder.HasOne(x => x.RootProduct).WithMany()
                 .HasForeignKey(x => x.RootProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            builder.HasMany(x => x.ChildProducts).WithOne(x => x.RootProduct)
+                .HasForeignKey(x => x.RootProductId);
+            builder.HasMany(x => x.ProductCombos).WithOne(x => x.Product)
+                .IsRequired(false);
         }
     }
 }

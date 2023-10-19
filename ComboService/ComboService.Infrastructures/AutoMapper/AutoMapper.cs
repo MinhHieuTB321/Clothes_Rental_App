@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using ComboService.Application.ViewModels.ComboViewModel.Request;
-using ComboService.Application.ViewModels.ComboViewModel.Response;
+using ComboService.Application.ViewModels.Request;
+using ComboService.Application.ViewModels.Response;
 using ComboService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -29,6 +29,14 @@ namespace ComboService.Infrastructures.AutoMapper
             #region ProductCombo
             CreateMap<ProductCombo, ProductComboResponseModel>().ReverseMap();
             CreateMap<ProductComboRequestModel, ProductCombo>();
+            #endregion
+
+            #region Product
+            CreateMap<Product, ProductResponseModel>().ReverseMap();
+            #endregion
+
+            #region Shop
+            CreateMap<Shop, ShopResponseModel>().ReverseMap();
             #endregion
         }
     }

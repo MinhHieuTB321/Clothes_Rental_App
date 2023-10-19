@@ -16,6 +16,7 @@ namespace ComboService.Infrastructures.FluentAPIs
             builder.HasOne(x => x.Combo)
                 .WithMany(x => x.ProductCombos)
                 .HasForeignKey(x => x.ComboId);
+
             builder.HasOne(x => x.Product)
                 .WithMany(x => x.ProductCombos)
                 .HasForeignKey(x => x.ProductId);

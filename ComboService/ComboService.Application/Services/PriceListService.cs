@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using ComboService.Application.GlobalExceptionHandling;
 using ComboService.Application.Interfaces;
-using ComboService.Application.ViewModels.ComboViewModel.Request;
-using ComboService.Application.ViewModels.ComboViewModel.Response;
+using ComboService.Application.ViewModels.Request;
+using ComboService.Application.ViewModels.Response;
 using ComboService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;

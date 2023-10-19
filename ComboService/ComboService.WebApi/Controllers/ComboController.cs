@@ -1,6 +1,8 @@
 ﻿using ComboService.Application.Interfaces;
-using ComboService.Application.ViewModels.ComboViewModel.Request;
-using ComboService.Application.ViewModels.ComboViewModel.Response;
+using ComboService.Application.ViewModels.Request;
+using ComboService.Application.ViewModels.Response;
+using ComboService.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ComboService.WebApi.Controllers
@@ -37,6 +39,7 @@ namespace ComboService.WebApi.Controllers
         /// <summary>
         /// Create combo
         /// </summary>
+        [Authorize(Roles = nameof(RoleEnum.Owner))]
         [HttpPost]
         public async Task<ActionResult<ComboResponseModel>> CreateCombo([FromBody] CreateComboRequestModel request)
         {
@@ -47,6 +50,7 @@ namespace ComboService.WebApi.Controllers
         /// <summary>
         /// Update combo
         /// </summary>
+        [Authorize(Roles = nameof(RoleEnum.Owner))]
         [HttpPut("{id}")]
         public async Task<ActionResult<ComboResponseModel>> UpdateCombo(Guid id, [FromBody] UpdateComboRequestModel request)
         {
@@ -57,6 +61,7 @@ namespace ComboService.WebApi.Controllers
         /// <summary>
         /// Delete Combo
         /// </summary>
+        [Authorize(Roles = nameof(RoleEnum.Owner))]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ComboResponseModel>> DeleteCombo(Guid id)
         {

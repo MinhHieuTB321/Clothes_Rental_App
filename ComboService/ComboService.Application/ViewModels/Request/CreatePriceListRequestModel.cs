@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComboService.Application.ViewModels.ComboViewModel.Response
+namespace ComboService.Application.ViewModels.Request
 {
-    public class PriceListResponseModel
+    public class CreatePriceListRequestModel
     {
         public decimal Deposit { get; set; } = default!;
         public decimal RentalPrice { get; set; } = default!;

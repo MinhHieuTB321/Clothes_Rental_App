@@ -1,5 +1,5 @@
-﻿using ComboService.Application.ViewModels.ComboViewModel.Request;
-using ComboService.Application.ViewModels.ComboViewModel.Response;
+﻿using ComboService.Application.ViewModels.Request;
+using ComboService.Application.ViewModels.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;

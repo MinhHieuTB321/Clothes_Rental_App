@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComboService.Application.ViewModels.ComboViewModel.Request
+namespace ComboService.Application.ViewModels.Request
 {
     public class CreateComboRequestModel
     {

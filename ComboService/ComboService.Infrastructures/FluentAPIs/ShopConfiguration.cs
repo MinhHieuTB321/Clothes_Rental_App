@@ -13,6 +13,11 @@ namespace ComboService.Infrastructures.FluentAPIs
     {
         public void Configure(EntityTypeBuilder<Shop> builder)
         {
+            builder.HasKey(x => x.Id);
+
+            builder.HasMany(x => x.Combos)
+                .WithOne(x => x.Shop)
+                .HasForeignKey(x => x.ShopId);
         }
     }
 }

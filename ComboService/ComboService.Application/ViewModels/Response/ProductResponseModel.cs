@@ -1,18 +1,18 @@
-﻿using System;
+﻿using ComboService.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ComboService.Domain.Entities
+namespace ComboService.Application.ViewModels.Response
 {
-    public class Product : BaseEntity
+    public class ProductResponseModel
     {
+        public Guid Id { get; set; } = default!;
         public string ProductName { get; set; } = default!;
-
         public Guid? RootProductId { get; set; } = default!;
-        public Product RootProduct { get; set; } = default!;
         public string Description { get; set; } = default!;
         public string Status { get; set; } = default!;
         public string Size { get; set; } = default!;
@@ -22,7 +22,6 @@ namespace ComboService.Domain.Entities
         public decimal Compensation { get; set; } = default!;
 
         public ICollection<Product> ChildProducts { get; set; }
-
 
         //Image
         [NotMapped]
