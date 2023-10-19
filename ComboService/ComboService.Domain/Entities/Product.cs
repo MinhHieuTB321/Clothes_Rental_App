@@ -10,7 +10,8 @@ namespace ComboService.Domain.Entities
     public class Product : BaseEntity
     {
         public string ProductName { get; set; } = default!;
-        public Guid RootProductId { get; set; } = default!;
+
+        public Guid? RootProductId { get; set; } = default!;
         public Product RootProduct { get; set; } = default!;
         public string Description { get; set; } = default!;
         public string Status { get; set; } = default!;
@@ -18,7 +19,9 @@ namespace ComboService.Domain.Entities
         public string Color { get; set; } = default!;
         public string Material { get; set; } = default!;
         public decimal Price { get; set; } = default!;
-        public decimal Compesation { get; set; } = default!;
+        public decimal Compensation { get; set; } = default!;
+
+        public ICollection<Product> ChildProducts { get; set; }
 
 
         //Image
@@ -28,5 +31,6 @@ namespace ComboService.Domain.Entities
         //Category
         public Guid CategoryId { get; set; } = default!;
 
+        public ICollection<ProductCombo> ProductCombos { get; set; } = default!;
     }
 }

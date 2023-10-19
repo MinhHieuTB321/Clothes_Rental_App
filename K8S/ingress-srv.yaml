@@ -66,31 +66,17 @@ spec:
                 name: orders-clusterip-srv
                 port:
                   number: 80
-          - path: /api/categories
+          - path: /api/combos
             pathType: Prefix
             backend:
               service:
-                name: shops-clusterip-srv
+                name: combos-clusterip-srv
                 port:
                   number: 80
-          - path: /api/owners
+          - path: /api/pricelists
             pathType: Prefix
             backend:
               service:
-                name: shops-clusterip-srv
+                name: combos-clusterip-srv
                 port:
-                  number: 80
-          - path: /api/products
-            pathType: Prefix
-            backend:
-              service:
-                name: shops-clusterip-srv
-                port:
-                  number: 80
-          - path: /api/shops
-            pathType: Prefix
-            backend:
-              service:
-                name: shops-clusterip-srv
-                port:
-                  number: 80
+                  number: 80                  

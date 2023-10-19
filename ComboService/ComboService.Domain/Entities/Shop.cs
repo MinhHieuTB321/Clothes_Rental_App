@@ -9,6 +9,7 @@ namespace ComboService.Domain.Entities
 {
     public class Shop : BaseEntity
     {
+        public Guid OwnerId { get; set; } = default!;
         public string ShopName { get; set; } = default!;
         public string ShopCode { get; set; } = default!;
         public string ShopEmail { get; set; } = default!;

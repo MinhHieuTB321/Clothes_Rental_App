@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: combos-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: comboservice
+  template:
+    metadata:
+      labels:
+        app: comboservice
+    spec:
+      containers:
+        - name: comboservice
+          image: ownhieu0804/comboservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: combos-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: comboservice
+  ports:
+  - name: comboservice
+    protocol: TCP
+    port: 80
+    targetPort: 80 

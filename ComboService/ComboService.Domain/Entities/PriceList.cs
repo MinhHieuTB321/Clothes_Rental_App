@@ -11,7 +11,7 @@ namespace ComboService.Domain.Entities
         public decimal Deposit { get; set; } = default!;
         public decimal RentalPrice { get; set; } = default!;
         public string Duration { get; set; } = default!;
-
+        public Guid ComboId { get; set; } = default!;
         public Combo Combo { get; set; } = default!;
     }
 }
