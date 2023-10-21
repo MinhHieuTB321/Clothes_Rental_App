@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using OrderService.Application.ViewModels;
+using OrderService.Application.ViewModels.Combos;
 using OrderService.Application.ViewModels.Customers;
 using OrderService.Application.ViewModels.Orders;
 using OrderService.Application.ViewModels.Shops;
@@ -19,6 +20,8 @@ namespace OrderService.Application.EventProcessing
     {
         OrderUpdatePublished,
         ShopPublished,
+        CustomerPublished,
+        ComboPublished,
         Undetermined
     }
     public class EventProcessor : IEventProcessor
@@ -44,8 +47,60 @@ namespace OrderService.Application.EventProcessing
                 case EventType.ShopPublished:
                     await AddShop(message);
                     break;
+                case EventType.CustomerPublished:
+                    await AddCustomer(message);
+                    break;
+                case EventType.ComboPublished:
+                    await AddCombo(message);
+                    break;
                 default:
                     break;
+            }
+        }
+
+        private async Task AddCombo(string message)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var comboCreateModel = JsonSerializer.Deserialize<ComboCreateModel>(message);
+
+                try
+                {
+                    var combo = _mapper.Map<Combo>(comboCreateModel);
+                    await unitOfWork.ComboRepository.AddAsync(combo);
+                    await unitOfWork.SaveChangesAsync();
+                    Console.WriteLine($"--> Combo Added!");
+                    
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Could not add new combo to Db {ex.Message}");
+                }
+            }
+        }
+
+        private async Task AddCustomer(string message)
+        {
+             using(var scope= _scopeFactory.CreateScope())
+            {
+                var unitOfWork= scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var customerPublishedModel = JsonSerializer.Deserialize<CustomerPublishedModel>(message);
+
+                try
+                {   
+                    var user= _mapper.Map<Customer>(customerPublishedModel);
+                    if(await unitOfWork.CustomerRepository.GetByIdAsync(user.Id) ==null)
+                    {
+                        await unitOfWork.CustomerRepository.AddAsync(user);
+                        await unitOfWork.SaveChangesAsync();
+                        Console.WriteLine($"--> customer added!");
+                    }
+                }   
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"--> Could not add customer to Db {ex.Message}");
+                }
             }
         }
 
@@ -118,6 +173,12 @@ namespace OrderService.Application.EventProcessing
                 case "Shop_Published":
                     Console.WriteLine("-->Shop Published Event Detected");
                     return EventType.ShopPublished;
+                case "Customer_Published":
+                    Console.WriteLine("-->Customer Published Event Detected");
+                    return EventType.CustomerPublished;
+                case "Combo_Published":
+                    Console.WriteLine("-->Combo Published Event Detected");
+                    return EventType.ComboPublished;
                 default:
                     Console.WriteLine("--> Could not determine the event type");
                     return EventType.Undetermined;

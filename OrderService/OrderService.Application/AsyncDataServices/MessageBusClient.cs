@@ -85,20 +85,5 @@ namespace OrderService.Application.AsyncDataServices
             }
         }
 
-        public void PublishNewCustomer(CustomerReadModel model)
-        {
-            var customerPubblishModel = _mapper.Map<CustomerPublishedModel>(model);
-            var message = JsonSerializer.Serialize(customerPubblishModel);
-
-            if (_connection!.IsOpen)
-            {
-                Console.WriteLine("RabbitMQ Connection Open, Sending message...");
-                SendMessage(message);
-            }
-            else
-            {
-                Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
-            }
-        }
     }
 }

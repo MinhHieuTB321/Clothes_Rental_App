@@ -45,13 +45,6 @@ spec:
                 name: users-clusterip-srv
                 port:
                   number: 80
-          - path: /api/demo
-            pathType: Prefix
-            backend:
-              service:
-                name: orders-clusterip-srv
-                port:
-                  number: 80
           - path: /api/orders
             pathType: Prefix
             backend:
@@ -65,4 +58,46 @@ spec:
               service:
                 name: orders-clusterip-srv
                 port:
-                  number: 80              
+                  number: 80
+          - path: /api/combos
+            pathType: Prefix
+            backend:
+              service:
+                name: combos-clusterip-srv
+                port:
+                  number: 80
+          - path: /api/prices
+            pathType: Prefix
+            backend:
+              service:
+                name: combos-clusterip-srv
+                port:
+                  number: 80
+          - path: /api/categories
+            pathType: Prefix
+            backend:
+              service:
+                name: shops-clusterip-srv
+                port:
+                  number: 80
+          - path: /api/owners
+            pathType: Prefix
+            backend:
+              service:
+                name: shops-clusterip-srv
+                port:
+                  number: 80
+          - path: /api/products
+            pathType: Prefix
+            backend:
+              service:
+                name: shops-clusterip-srv
+                port:
+                  number: 80
+          - path: /api/shops
+            pathType: Prefix
+            backend:
+              service:
+                name: shops-clusterip-srv
+                port:
+                  number: 80

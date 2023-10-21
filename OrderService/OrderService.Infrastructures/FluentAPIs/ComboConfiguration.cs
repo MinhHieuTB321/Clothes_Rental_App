@@ -14,6 +14,7 @@ namespace OrderService.Infrastructures.FluentAPIs
         public void Configure(EntityTypeBuilder<Combo> builder)
         {
             builder.HasKey(x => x.Id);
+            builder.Property(x=>x.Id).ValueGeneratedNever();
             builder.HasOne(x => x.Shop)
                 .WithMany(x => x.Combos)
                 .HasForeignKey(x => x.ShopId);

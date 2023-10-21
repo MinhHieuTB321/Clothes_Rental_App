@@ -63,14 +63,6 @@ namespace OrderService.WebApi.Controllers
         public async Task<IActionResult> Create(CustomerCreateModel model)
         {
             var result = await _service.CreateCustomer(model);
-            try
-            {
-                _messageBusClient.PublishNewCustomer(result);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
-            }
             return CreatedAtAction(nameof(Get),new {id=result.Id},result);
         }
 

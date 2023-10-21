@@ -4,6 +4,7 @@ using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 using UserService.Application.ViewModels.Orders;
+using UserService.Application.ViewModels.Users;
 
 namespace UserService.Application.AsyncDataServices
 {
@@ -66,6 +67,24 @@ namespace UserService.Application.AsyncDataServices
         public void PublishedUpdateOrder(OrderUpdatePublishedModel model)
         {
             var message = JsonSerializer.Serialize(model);
+
+            if (_connection!.IsOpen)
+            {
+                Console.WriteLine("RabbitMQ Connection Open, Sending message...");
+                SendMessage(message);
+            }
+            else
+            {
+                Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
+            }
+        }
+
+        public void PublishedUser(UserCreateModel model)
+        {
+            var publishedModel= _mapper.Map<UserPublishedModel>(model);
+            if(model.Role=="Customer") publishedModel.Event="Customer_Published";
+
+             var message = JsonSerializer.Serialize(publishedModel);
 
             if (_connection!.IsOpen)
             {

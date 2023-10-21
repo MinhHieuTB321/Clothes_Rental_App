@@ -12,6 +12,5 @@ namespace OrderService.Application.AsyncDataServices
     {
         void PublishNewOrder(OrderReadModel model);
 
-        void PublishNewCustomer(CustomerReadModel model);
     }
 }

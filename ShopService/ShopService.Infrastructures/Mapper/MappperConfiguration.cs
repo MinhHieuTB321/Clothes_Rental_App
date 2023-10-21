@@ -29,7 +29,7 @@ namespace ShopService.Infrastructures.Mapper
             #endregion
 
             #region  Owner
-            CreateMap<OwnerReadModel, OwnerPublishedModel>().ReverseMap();
+            CreateMap<Owner, OwnerPublishedModel>().ReverseMap();
             CreateMap<OwnerCreateModel, Owner>().ReverseMap();
             CreateMap<OwnerReadModel, Owner>().ReverseMap();
             CreateMap<OwnerUpdateModel, Owner>().ReverseMap();

@@ -9,7 +9,6 @@ namespace UserService.Infrastructures.FluentAPIs
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.HasKey(x=>x.Id);
-            builder.Property(x=>x.Id).ValueGeneratedNever();
             
             builder.HasMany(u=>u.Orders)
                 .WithOne(o=>o.Customer)

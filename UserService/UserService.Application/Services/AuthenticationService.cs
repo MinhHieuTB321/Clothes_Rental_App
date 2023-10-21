@@ -18,8 +18,8 @@ namespace UserService.Application.Services
         }
         public async Task<AuthenticationResponseModel> LoginAsync(AuthenticationRequestModel model)
         {
-            var user= await _unitOfWork.UserRepository.FindByField(x=>x.Email==model.Email);
-            if(user==null) throw new NotFoundException("User is not exist!");
+            var user= await _unitOfWork.UserRepository.FindByField(x=>x.Email==model.Email&&x.Password==model.Password);
+            if(user==null) throw new NotFoundException("Invalid User Account!");
             
             var accessToken= user.GenerateJsonWebToken(_config["JWTSecretKey"]!);
             return new AuthenticationResponseModel{AccessToken=accessToken};

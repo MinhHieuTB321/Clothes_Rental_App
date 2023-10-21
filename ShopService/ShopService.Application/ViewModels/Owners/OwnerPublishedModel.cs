@@ -13,7 +13,8 @@ namespace ShopService.Application.ViewModels.Owners
         public string Name { get; set; } = default!;
         public string Email { get; set; } = default!;
         public string Phone { get; set; } = default!;
-        public string Role {  get; set; } = RoleEnum.Owner.ToString();
-        public string? Event { get; set; } = "Owner_Published";
+        public string Gender{get;set;}=default!;
+        public string Address{get;set;}=default!;
+        public string Status{get;set;}="Active";
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using OrderService.Application.ViewModels.Combos;
 using OrderService.Application.ViewModels.Customers;
 using OrderService.Application.ViewModels.OrderDetails;
 using OrderService.Application.ViewModels.Orders;
@@ -21,7 +22,7 @@ namespace OrderService.Infrastructures.Mappers
             CreateMap<Customer,CustomerReadModel>().ReverseMap();
             CreateMap<CustomerCreateModel, Customer>().ReverseMap();
             CreateMap<CustomerUpdateModel, Customer>().ReverseMap();
-            CreateMap<CustomerReadModel, CustomerPublishedModel>();
+            CreateMap<Customer, CustomerPublishedModel>().ReverseMap();
             #endregion
 
             #region ORDER
@@ -56,6 +57,10 @@ namespace OrderService.Infrastructures.Mappers
             #endregion
             #region  SHOP
             CreateMap<ShopCreateModel,Shop>().ReverseMap();
+            #endregion
+
+            #region  COMBO
+            CreateMap<Combo,ComboCreateModel>().ReverseMap();
             #endregion
         }
     }

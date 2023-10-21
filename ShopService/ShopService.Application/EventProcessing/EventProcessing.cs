@@ -1,15 +1,16 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using ShopService.Application.ViewModels;
+using ShopService.Application.ViewModels.Owners;
+using ShopService.Domain.Entities;
 using System.Text.Json;
-using UserService.Application.ViewModels;
-using UserService.Application.ViewModels.Orders;
-using UserService.Domain.Entities;
 
-namespace UserService.Application.EventProcessing
+
+namespace ShopService.Application.EventProcessing
 {
     enum EventType
     {
-        OrderPublished,
+        OwnerPublished,
         Undetermined
     }
     public class EventProcessor:IEventProcessor
@@ -29,39 +30,39 @@ namespace UserService.Application.EventProcessing
             var eventType = DetermineEvent(message);
             switch (eventType)
             {
-                case EventType.OrderPublished:
-                    await AddOrder(message);
+                case EventType.OwnerPublished:
+                    await AddOwner(message);
                     break;
                 default:
                     break;
             }
         }
 
-       
-
-        private async Task AddOrder(string message)
+        private async Task AddOwner(string message)
         {
             using(var scope= _scopeFactory.CreateScope())
             {
                 var unitOfWork= scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-                var orderReadModel = JsonSerializer.Deserialize<OrderReadModel>(message);
+                var customerPublishedModel = JsonSerializer.Deserialize<OwnerPublishedModel>(message);
 
                 try
                 {   
-                    var order= _mapper.Map<Order>(orderReadModel);
-                    if(await unitOfWork.OrderRepository.GetByIdAsync(order.Id) ==null)
+                    var user= _mapper.Map<Owner>(customerPublishedModel);
+                    if(await unitOfWork.OwnerRepository.GetByIdAsync(user.Id) ==null)
                     {
-                        await unitOfWork.OrderRepository.AddAsync(order);
+                        await unitOfWork.OwnerRepository.AddAsync(user);
                         await unitOfWork.SaveChangeAsync();
-                        Console.WriteLine($"--> order added!");
+                        Console.WriteLine($"--> owner added!");
                     }
                 }   
                 catch(Exception ex)
                 {
-                    Console.WriteLine($"--> Could not add Order  to Db {ex.Message}");
+                    Console.WriteLine($"--> Could not add user to Db {ex.Message}");
                 }
             }
         }
+
+
 
         private EventType DetermineEvent(string notificationMessage)
         {
@@ -71,9 +72,9 @@ namespace UserService.Application.EventProcessing
             //Console.WriteLine(eventType);
             switch (eventType!.Event)
             {
-                case "Order_Published":
-                    Console.WriteLine("-->Order Published Event Detected");
-                    return EventType.OrderPublished;
+                case "Owner_Published":
+                    Console.WriteLine("-->Owner Published Event Detected");
+                    return EventType.OwnerPublished;
                 default:
                     Console.WriteLine("--> Could not determine the event type");
                     return EventType.Undetermined;

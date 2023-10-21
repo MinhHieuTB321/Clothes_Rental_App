@@ -9,11 +9,9 @@ namespace ShopService.WebApi.Controllers
     public class OwnersController : BaseController
     {
         private readonly IOwnerService _service;
-        private readonly IMessageBusClient _messageBusClient;
-        public OwnersController(IOwnerService service, IMessageBusClient messageBusClient)
+        public OwnersController(IOwnerService service)
         {
             _service = service;
-            _messageBusClient = messageBusClient;
         }
 
         [Authorize(Roles = nameof(RoleEnum.Admin))]
@@ -48,17 +46,6 @@ namespace ShopService.WebApi.Controllers
         {
             var result = await _service.CreteOwner(ownerCreateModel);
             if(result is null) return BadRequest();
-            try
-            {
-                if (result != null)
-                {
-                    _messageBusClient.PublishedNewOwner(result);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
-            }
             return CreatedAtAction(nameof(GetOwnerById), new { id = result!.Id }, result);
 
         }

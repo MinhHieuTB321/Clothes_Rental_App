@@ -31,7 +31,7 @@ namespace ComboService.Infrastructures
             services.AddScoped<IProductService, ProductService>();
 			#endregion
 
-			//services.AddHostedService<MessageBusSubcriber>();
+			services.AddHostedService<MessageBusSubcriber>();
 			services.AddSingleton<IEventProcessor, EventProcessor>();
 			services.AddSingleton<IMessageBusClient, MessageBusClient>();
 

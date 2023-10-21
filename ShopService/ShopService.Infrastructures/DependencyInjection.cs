@@ -7,6 +7,8 @@ using ShopService.Application.Services;
 using ShopService.Application;
 using ShopService.Infrastructures.Repositories;
 using System.Text.Json.Serialization;
+using ShopService.Application.EventProcessing;
+using ShopService.Application.AsyncDataServices;
 
 namespace ShopService.Infrastructures
 {
@@ -16,6 +18,8 @@ namespace ShopService.Infrastructures
         {
 
             services.AddScoped<IMessageBusClient, MessageBusClient>();
+            services.AddScoped<IEventProcessor,EventProcessor>();
+            services.AddHostedService<MessageBusSubcriber>();
             #region DI_REPOSITORIES
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IOwnerRepository, OwnerRepository>();

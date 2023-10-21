@@ -15,6 +15,7 @@ namespace ShopService.Infrastructures.FluentAPIs
         public void Configure(EntityTypeBuilder<Owner> builder)
         {
             builder.HasKey(x => x.Id);
+            builder.Property(x=>x.Id).ValueGeneratedNever();
             builder.HasIndex(o => o.Email).IsUnique();
             builder.HasIndex(u => u.Phone).IsUnique();
             builder.HasMany(u => u.Shops).WithOne(o=>o.Owner).HasForeignKey(x=>x.OwnerId);

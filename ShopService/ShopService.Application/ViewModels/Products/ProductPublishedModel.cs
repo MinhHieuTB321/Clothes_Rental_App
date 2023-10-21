@@ -21,6 +21,7 @@ namespace ShopService.Application.ViewModels.Products
 
         public Guid ShopId { get; set; } = default!;
         public Guid CategoryId { get; set; } = default!;
+        public string CategoryName { get; set; } = default!;
         public string? Event { get; set; } = "Product_Published";
     }
 }
