@@ -63,8 +63,8 @@ namespace ComboService.Infrastructures.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("TotalValue")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("TotalValue")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -94,8 +94,8 @@ namespace ComboService.Infrastructures.Migrations
                     b.Property<DateTime?>("DeletionDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Deposit")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Deposit")
+                        .HasColumnType("float");
 
                     b.Property<string>("Duration")
                         .IsRequired()
@@ -110,8 +110,8 @@ namespace ComboService.Infrastructures.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("RentalPrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("RentalPrice")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -129,12 +129,15 @@ namespace ComboService.Infrastructures.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Color")
+                    b.Property<string>("CategoryName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Compensation")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Compesation")
+                        .HasColumnType("float");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -165,8 +168,8 @@ namespace ComboService.Infrastructures.Migrations
                     b.Property<DateTime?>("ModificationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
@@ -175,9 +178,11 @@ namespace ComboService.Infrastructures.Migrations
                     b.Property<Guid?>("RootProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Size")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("ShopId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Size")
+                        .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -186,6 +191,8 @@ namespace ComboService.Infrastructures.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RootProductId");
+
+                    b.HasIndex("ShopId");
 
                     b.ToTable("Product");
                 });
@@ -257,6 +264,14 @@ namespace ComboService.Infrastructures.Migrations
                     b.Property<DateTime?>("DeletionDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -319,11 +334,19 @@ namespace ComboService.Infrastructures.Migrations
             modelBuilder.Entity("ComboService.Domain.Entities.Product", b =>
                 {
                     b.HasOne("ComboService.Domain.Entities.Product", "RootProduct")
-                        .WithMany("ChildProducts")
+                        .WithMany("SubProducts")
                         .HasForeignKey("RootProductId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("ComboService.Domain.Entities.Shop", "Shop")
+                        .WithMany()
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("RootProduct");
+
+                    b.Navigation("Shop");
                 });
 
             modelBuilder.Entity("ComboService.Domain.Entities.ProductCombo", b =>
@@ -352,9 +375,9 @@ namespace ComboService.Infrastructures.Migrations
 
             modelBuilder.Entity("ComboService.Domain.Entities.Product", b =>
                 {
-                    b.Navigation("ChildProducts");
-
                     b.Navigation("ProductCombos");
+
+                    b.Navigation("SubProducts");
                 });
 
             modelBuilder.Entity("ComboService.Domain.Entities.Shop", b =>

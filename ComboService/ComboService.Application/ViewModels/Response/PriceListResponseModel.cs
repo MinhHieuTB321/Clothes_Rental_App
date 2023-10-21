@@ -8,8 +8,9 @@ namespace ComboService.Application.ViewModels.Response
 {
     public class PriceListResponseModel
     {
-        public decimal Deposit { get; set; } = default!;
-        public decimal RentalPrice { get; set; } = default!;
+        public Guid Id {  get; set; }
+        public double Deposit { get; set; } = default!;
+        public double RentalPrice { get; set; } = default!;
         public string Duration { get; set; } = default!;
         public Guid ComboId { get; set; } = default!;
     }

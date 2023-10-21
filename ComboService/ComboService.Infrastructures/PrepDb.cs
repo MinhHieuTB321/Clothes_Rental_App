@@ -35,87 +35,87 @@ namespace ComboService.Infrastructures
                 }
 
             }
-            AddShop(context);
-            AddProduct(context);
-            AddCombo(context);
-            AddPriceList(context);
+            //AddShop(context);
+            //AddProduct(context);
+            //AddCombo(context);
+            //AddPriceList(context);
         }
 
-        private static void AddProduct(ApplicationDbContext contexet)
-        {
-            if (!contexet!.Product.Any())
-            {
-                Console.WriteLine("->> Adding Product");
-                contexet!.Product.AddRange(
-                new Product
-                {
-                    Id = Guid.Parse("74c46a37-8d6e-444b-817d-59caf1e61b9d"),
-                    RootProductId = null,
-                    Description = "Beautiful Dress",
-                    ProductName = "Dress",
-                    Size = "M",
-                    Color = "White",
-                    Material = "Cotton",
-                    Price = 1600000,
-                    Status = "Active",
-                    CreationDate = DateTime.Now,
-                    IsDeleted = false
-                },
+        //private static void AddProduct(ApplicationDbContext contexet)
+        //{
+        //    if (!contexet!.Product.Any())
+        //    {
+        //        Console.WriteLine("->> Adding Product");
+        //        contexet!.Product.AddRange(
+        //        new Product
+        //        {
+        //            Id = Guid.Parse("74c46a37-8d6e-444b-817d-59caf1e61b9d"),
+        //            RootProductId = null,
+        //            Description = "Beautiful Dress",
+        //            ProductName = "Dress",
+        //            Size = "M",
+        //            Color = "White",
+        //            Material = "Cotton",
+        //            Price = 1600000,
+        //            Status = "Active",
+        //            CreationDate = DateTime.Now,
+        //            IsDeleted = false
+        //        },
 
-                new Product
-                {
-                    Id = Guid.Parse("938e1e63-2757-4ab7-b61f-c55fb5eb906a"),
-                    RootProductId = Guid.Parse("74c46a37-8d6e-444b-817d-59caf1e61b9d"),
-                    Description = "Beautiful Dress",
-                    Size = "M",
-                    Color = "White",
-                    Material = "Cotton",
-                    Price = 1600000,
-                    ProductName = "Pixie Dress",
-                    Status = "Active",
-                    Compensation = 1000000,
-                    CreationDate = DateTime.Now,
-                    IsDeleted = false
-                },
-                new Product
-                {
-                    Id = Guid.Parse("a0cc3ed1-f9ea-4c5b-8625-1a4fc40d9f39"),
-                    RootProductId = Guid.Parse("74c46a37-8d6e-444b-817d-59caf1e61b9d"),
-                    Description = "Beautiful Dress",
-                    Size = "M",
-                    Color = "Black",
-                    Material = "Cotton",
-                    Price = 1100000,
-                    ProductName = "Lana Dress",
-                    Status = "Active",
-                    Compensation = 850000,
-                    CreationDate = DateTime.Now,
-                    IsDeleted = false
-                },
-                new Product
-                {
-                    Id = Guid.Parse("0ffebf97-0113-4af1-8530-aec602279683"),
-                    RootProductId = Guid.Parse("74c46a37-8d6e-444b-817d-59caf1e61b9d"),
-                    Description = "Beautiful Dress",
-                    Size = "M",
-                    Color = "Red",
-                    Material = "Cotton",
-                    Price = 950000,
-                    Status = "Active",
-                    ProductName = "Blood Mini Dress",
-                    Compensation = 700000,
-                    CreationDate = DateTime.Now,
-                    IsDeleted = false
-                }
-                );
-                contexet.SaveChanges();
+        //        new Product
+        //        {
+        //            Id = Guid.Parse("938e1e63-2757-4ab7-b61f-c55fb5eb906a"),
+        //            RootProductId = Guid.Parse("74c46a37-8d6e-444b-817d-59caf1e61b9d"),
+        //            Description = "Beautiful Dress",
+        //            Size = "M",
+        //            Color = "White",
+        //            Material = "Cotton",
+        //            Price = 1600000,
+        //            ProductName = "Pixie Dress",
+        //            Status = "Active",
+        //            Compensation = 1000000,
+        //            CreationDate = DateTime.Now,
+        //            IsDeleted = false
+        //        },
+        //        new Product
+        //        {
+        //            Id = Guid.Parse("a0cc3ed1-f9ea-4c5b-8625-1a4fc40d9f39"),
+        //            RootProductId = Guid.Parse("74c46a37-8d6e-444b-817d-59caf1e61b9d"),
+        //            Description = "Beautiful Dress",
+        //            Size = "M",
+        //            Color = "Black",
+        //            Material = "Cotton",
+        //            Price = 1100000,
+        //            ProductName = "Lana Dress",
+        //            Status = "Active",
+        //            Compensation = 850000,
+        //            CreationDate = DateTime.Now,
+        //            IsDeleted = false
+        //        },
+        //        new Product
+        //        {
+        //            Id = Guid.Parse("0ffebf97-0113-4af1-8530-aec602279683"),
+        //            RootProductId = Guid.Parse("74c46a37-8d6e-444b-817d-59caf1e61b9d"),
+        //            Description = "Beautiful Dress",
+        //            Size = "M",
+        //            Color = "Red",
+        //            Material = "Cotton",
+        //            Price = 950000,
+        //            Status = "Active",
+        //            ProductName = "Blood Mini Dress",
+        //            Compensation = 700000,
+        //            CreationDate = DateTime.Now,
+        //            IsDeleted = false
+        //        }
+        //        );
+        //        contexet.SaveChanges();
 
-            }
-            else
-            {
-                Console.WriteLine("->> We already have product data!");
-            }
-        }
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine("->> We already have product data!");
+        //    }
+        //}
 
         private static void AddShop(ApplicationDbContext contexet)
         {

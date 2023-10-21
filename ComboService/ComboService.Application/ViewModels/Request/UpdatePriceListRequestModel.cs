@@ -9,7 +9,7 @@ namespace ComboService.Application.ViewModels.Request
     public class UpdatePriceListRequestModel
     {
         public Guid PriceListId { get; set; } = default!;
-        public decimal Deposit { get; set; } = default!;
-        public decimal RentalPrice { get; set; } = default!;
+        public double Deposit { get; set; } = default!;
+        public double RentalPrice { get; set; } = default!;
     }
 }

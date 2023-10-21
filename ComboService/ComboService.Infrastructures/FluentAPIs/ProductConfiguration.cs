@@ -18,7 +18,7 @@ namespace ComboService.Infrastructures.FluentAPIs
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired(false);
 
-            builder.HasMany(x => x.ChildProducts).WithOne(x => x.RootProduct)
+            builder.HasMany(x => x.SubProducts).WithOne(x => x.RootProduct)
                 .HasForeignKey(x => x.RootProductId);
             builder.HasMany(x => x.ProductCombos).WithOne(x => x.Product)
                 .IsRequired(false);

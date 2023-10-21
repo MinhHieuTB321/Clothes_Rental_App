@@ -11,7 +11,7 @@ namespace ComboService.Domain.Entities
         public string ComboName { get; set; } = default!;
         public int Quantity { get; set; } = default!;
         public string Status { get; set; } = default!;
-        public decimal TotalValue { get; set; } = default!;
+        public double TotalValue { get; set; } = default!;
 
         //PriceList
         public ICollection<PriceList> PriceLists { get; set; } = default!;

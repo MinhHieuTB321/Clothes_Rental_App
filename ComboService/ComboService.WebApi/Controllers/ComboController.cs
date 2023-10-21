@@ -1,4 +1,5 @@
 ﻿using ComboService.Application.Interfaces;
+using ComboService.Application.Services;
 using ComboService.Application.ViewModels.Request;
 using ComboService.Application.ViewModels.Response;
 using ComboService.Domain.Enums;
@@ -10,16 +11,19 @@ namespace ComboService.WebApi.Controllers
     public class ComboController : BaseController
     {
         private readonly IComboService _service;
+		private readonly IMessageBusClient _messageBusClient;
 
-        public ComboController(IComboService service)
+		public ComboController(IComboService service,IMessageBusClient messageBus)
         {
             _service = service;
+            _messageBusClient = messageBus;
         }
 
-        /// <summary>
-        /// Get all combo
-        /// </summary>
-        [HttpGet]
+		/// <summary>
+		/// Get all combo
+		/// </summary>
+		[Authorize]
+		[HttpGet]
         public async Task<ActionResult<IEnumerable<ComboResponseModel>>> GetAll()
         {
             var rs = await _service.GetCombos();
@@ -29,6 +33,7 @@ namespace ComboService.WebApi.Controllers
         /// <summary>
         /// Get combo by id
         /// </summary>
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<ComboResponseModel>> GetComboById(Guid Id)
         {
@@ -44,7 +49,15 @@ namespace ComboService.WebApi.Controllers
         public async Task<ActionResult<ComboResponseModel>> CreateCombo([FromBody] CreateComboRequestModel request)
         {
             var rs = await _service.CreateCombo(request);
-            return Ok(rs);
+			try
+			{
+				_messageBusClient.PublishedCombo(rs);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+			}
+			return CreatedAtAction(nameof(GetComboById), new {id=rs.Id},rs);
         }
 
         /// <summary>
@@ -55,7 +68,7 @@ namespace ComboService.WebApi.Controllers
         public async Task<ActionResult<ComboResponseModel>> UpdateCombo(Guid id, [FromBody] UpdateComboRequestModel request)
         {
             var rs = await _service.UpdateCombo(id, request);
-            return Ok(rs);
+            return NoContent();
         }
 
         /// <summary>
@@ -66,7 +79,7 @@ namespace ComboService.WebApi.Controllers
         public async Task<ActionResult<ComboResponseModel>> DeleteCombo(Guid id)
         {
             var rs = await _service.DeleteCombo(id);
-            return Ok(rs);
+            return NoContent();
         }
     }
 }

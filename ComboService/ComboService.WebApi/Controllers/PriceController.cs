@@ -20,7 +20,8 @@ namespace ComboService.WebApi.Controllers
         /// Get all pricelist
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PriceListResponseModel>>> GetPriceLists()
+		[Authorize]
+		public async Task<ActionResult<IEnumerable<PriceListResponseModel>>> GetPriceLists()
         {
             var rs = await _service.GetPriceLists();
             return Ok(rs);
@@ -30,7 +31,8 @@ namespace ComboService.WebApi.Controllers
         /// Get pricelist
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult<PriceListResponseModel>> GetPriceList(Guid id)
+		[Authorize]
+		public async Task<ActionResult<PriceListResponseModel>> GetPriceListById(Guid id)
         {
             var rs = await _service.GetPriceListByGuid(id);
             return Ok(rs);
@@ -44,7 +46,7 @@ namespace ComboService.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<PriceListResponseModel>>> CreatePriceList([FromBody] CreatePriceListRequestModel request)
         {
             var rs = await _service.CreatePriceList(request);
-            return Ok(rs);
+            return CreatedAtAction(nameof(GetPriceListById),new {id=rs.Id},rs);
         }
 
         /// <summary>
@@ -55,7 +57,7 @@ namespace ComboService.WebApi.Controllers
         public async Task<ActionResult<PriceListResponseModel>> UpdatePriceList(Guid id, [FromBody] UpdatePriceListRequestModel request)
         {
             var rs = await _service.UpdatePriceList(id, request);
-            return Ok(rs);
+            return NoContent();
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace ComboService.WebApi.Controllers
         public async Task<ActionResult<PriceListResponseModel>> DeleteCombo(Guid id)
         {
             var rs = await _service.DeletePriceList(id);
-            return Ok(rs);
+            return NoContent();
         }
     }
 }

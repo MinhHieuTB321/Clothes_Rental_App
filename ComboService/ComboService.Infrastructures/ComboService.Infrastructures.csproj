@@ -24,8 +24,4 @@
     <ProjectReference Include="..\ComboService.Application\ComboService.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

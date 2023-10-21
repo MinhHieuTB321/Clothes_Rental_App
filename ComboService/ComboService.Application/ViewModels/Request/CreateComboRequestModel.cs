@@ -13,7 +13,7 @@ namespace ComboService.Application.ViewModels.Request
         public string ComboName { get; set; } = default!;
         public int Quantity { get; set; } = default!;
         public string Status { get; set; } = nameof(ActiveEnum.Active);
-        public decimal TotalValue { get; set; } = default!;
+        public double TotalValue { get; set; } = default!;
         public Guid ShopId { get; set; } = default!;
         public ICollection<ProductComboRequestModel> ProductCombos { get; set; } = default!;
     }

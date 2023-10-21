@@ -1,5 +1,7 @@
 ﻿using ComboService.Application;
+using ComboService.Application.AsyncDataServices;
 using ComboService.Application.Commons;
+using ComboService.Application.EventProcessing;
 using ComboService.Application.Interfaces;
 using ComboService.Application.Repositories;
 using ComboService.Application.Services;
@@ -27,9 +29,13 @@ namespace ComboService.Infrastructures
             services.AddScoped<IPriceListService, PriceListService>();
             services.AddScoped<IShopService, ShopService>();
             services.AddScoped<IProductService, ProductService>();
-            #endregion
+			#endregion
 
-            services.AddDbContext<ApplicationDbContext>(options =>
+			//services.AddHostedService<MessageBusSubcriber>();
+			services.AddSingleton<IEventProcessor, EventProcessor>();
+			services.AddSingleton<IMessageBusClient, MessageBusClient>();
+
+			services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(appConfig.DatabaseConnection);
                 //ptions.UseInMemoryDatabase("InMem");
