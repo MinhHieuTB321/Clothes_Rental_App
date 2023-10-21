@@ -65,18 +65,4 @@ spec:
               service:
                 name: orders-clusterip-srv
                 port:
-                  number: 80
-          - path: /api/combos
-            pathType: Prefix
-            backend:
-              service:
-                name: combos-clusterip-srv
-                port:
-                  number: 80
-          - path: /api/pricelists
-            pathType: Prefix
-            backend:
-              service:
-                name: combos-clusterip-srv
-                port:
-                  number: 80                  
+                  number: 80              

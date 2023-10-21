@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ComboService.WebApi.Controllers
 {
-    public class PriceListController : BaseController
+    public class PriceController : BaseController
     {
         private readonly IPriceListService _service;
 
-        public PriceListController(IPriceListService service)
+        public PriceController(IPriceListService service)
         {
             _service = service;
         }

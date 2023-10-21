@@ -31,8 +31,8 @@ namespace ComboService.Infrastructures
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                //options.UseSqlServer(DbConnection);
-                options.UseInMemoryDatabase("InMem");
+                options.UseSqlServer(appConfig.DatabaseConnection);
+                //ptions.UseInMemoryDatabase("InMem");
             });
 
 

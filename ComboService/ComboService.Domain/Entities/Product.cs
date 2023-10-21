@@ -21,7 +21,7 @@ namespace ComboService.Domain.Entities
         public decimal Price { get; set; } = default!;
         public decimal Compensation { get; set; } = default!;
 
-        public ICollection<Product> ChildProducts { get; set; }
+        public ICollection<Product>? ChildProducts { get; set; }
 
 
         //Image

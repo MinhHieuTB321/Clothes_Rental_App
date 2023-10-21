@@ -2,7 +2,7 @@
 
 namespace ComboService.WebApi.Controllers
 {
-    [Route(Helpers.SettingVersionApi.Apiversion)]
+    [Route("api/[Controller]s")]
     [ApiController]
     public class BaseController : ControllerBase
     {
