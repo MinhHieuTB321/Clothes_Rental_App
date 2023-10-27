@@ -30,7 +30,7 @@ namespace ShopService.WebApi.Controllers
         public async Task<IActionResult>DeleteCategory(Guid id)
         {
             var result = await _service.DeleteCategory(id);
-            if(result) return BadRequest();
+            if(!result) return BadRequest();
             return NoContent();  
         }
         [Authorize]
@@ -55,6 +55,7 @@ namespace ShopService.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult>CreateCategory([FromForm]CategoryCreateModel model)
         {
+            Console.WriteLine(model.CategoryName);
             var result = await _service.CreateCategory(model);
             if(result == null) return BadRequest();
             return CreatedAtAction(nameof(GetCategoryById), new {id=result.Id},result);
@@ -64,6 +65,8 @@ namespace ShopService.WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult>UpdateCategory(Guid id, [FromForm]CategoryUpdateModel model)
         {
+            Console.WriteLine(model.Id);
+            Console.WriteLine(model.CategoryName);
             if (id != model.Id) return BadRequest();
             var result=await _service.UpdateCategory(model);
             if(result == null) return BadRequest();

@@ -69,7 +69,7 @@ namespace ShopService.Application.Services
             var category =await _unitOfWork.CategoryRepository.GetByIdAsync(categoryUpdateModel.Id);
             if(category is not null)
             {
-                _mapper.Map(category, categoryUpdateModel);
+                _mapper.Map(categoryUpdateModel, category);
                 _unitOfWork.CategoryRepository.Update(category);
                 if (!await _unitOfWork.SaveChangeAsync()) throw new Exception("There is an error in system");
                 return _mapper.Map<CategoryReadModel>(category);

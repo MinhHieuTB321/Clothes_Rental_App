@@ -19,7 +19,7 @@ namespace ShopService.Infrastructures
         #region DbSet
         public DbSet<Shop> Shops { get; set; }
         public DbSet<Owner> Owners { get; set; }
-        public DbSet<Category> Categorys { get; set; }
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         #endregion
