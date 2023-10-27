@@ -10,5 +10,6 @@ namespace ShopService.Application.ViewModels.Categories
     {
         public Guid Id { get; set; }
         public string CategoryName { get; set; } = null!;
+        public DateTime CreationDate { get; set; } = DateTime.Now;
     }
 }

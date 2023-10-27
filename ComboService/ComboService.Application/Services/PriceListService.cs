@@ -26,37 +26,14 @@ namespace ComboService.Application.Services
 
         public async Task<PriceListResponseModel> CreatePriceList(CreatePriceListRequestModel request)
         {
-            try
-            {
-                var checkList = _unitOfWork.Repository<PriceList>().GetAll().Where(x => x.ComboId.Equals(request.ComboId));
-                var checkPriceList = checkList.Where(x => x.Duration.Equals(request.Duration))
-                                .SingleOrDefault();
-                if(checkPriceList != null)
-                {
-                    throw new Exception("This price list is already exist!");
-                }
-                PriceList priceList = new PriceList();
-                priceList.RentalPrice = request.RentalPrice;
-                priceList.ComboId = request.ComboId;
-                priceList.Duration = request.Duration;
-                priceList.Deposit = request.Deposit;
-
-                #region Combo
-                Combo combo = new Combo();
-                combo = await _unitOfWork.Repository<Combo>().FindAsync(x => x.Id.Equals(request.ComboId));
-                combo.PriceLists.Add(priceList);
-                #endregion
-
-                await _unitOfWork.Repository<Combo>().UpdateDetached(combo);
-                await _unitOfWork.Repository<PriceList>().InsertAsync(priceList);
-
-                await _unitOfWork.CommitAsync();
-                return _mapper.Map<PriceList, PriceListResponseModel>(priceList);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+           var checkPrice= await _unitOfWork.Repository<PriceList>()
+                .GetAll()
+                .FirstOrDefaultAsync(x=>x.ComboId==request.ComboId && x.Duration.Equals(request.Duration));
+            if (checkPrice != null) throw new Exception("Duration is already exist!");
+            var price= _mapper.Map<PriceList>(request);
+            await _unitOfWork.Repository<PriceList>().InsertAsync(price);
+            await _unitOfWork.CommitAsync();
+            return _mapper.Map<PriceListResponseModel>(price);
         }
 
         public async Task<PriceListResponseModel> DeletePriceList(Guid Id)

@@ -79,7 +79,7 @@ namespace UserService.Application.AsyncDataServices
             }
         }
 
-        public void PublishedUser(UserCreateModel model)
+        public void PublishedUser(UserReadModel model)
         {
             var publishedModel= _mapper.Map<UserPublishedModel>(model);
             if(model.Role=="Customer") publishedModel.Event="Customer_Published";
@@ -96,5 +96,43 @@ namespace UserService.Application.AsyncDataServices
                 Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
             }
         }
-    }  
+
+		public void UpdatedUser(UserReadModel model)
+		{
+			var publishedModel = _mapper.Map<UserPublishedModel>(model);
+			if (model.Role == "Customer") publishedModel.Event = "Customer_Updated";
+            else publishedModel.Event = "Owner_Updated";
+
+			var message = JsonSerializer.Serialize(publishedModel);
+
+			if (_connection!.IsOpen)
+			{
+				Console.WriteLine("RabbitMQ Connection Open, Sending message...");
+				SendMessage(message);
+			}
+			else
+			{
+				Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
+			}
+		}
+
+		public void DeletedUser(UserReadModel model)
+		{
+			var publishedModel = _mapper.Map<UserPublishedModel>(model);
+			if (model.Role == "Customer") publishedModel.Event = "Customer_Deleted";
+			else publishedModel.Event = "Owner_Deleted";
+
+			var message = JsonSerializer.Serialize(publishedModel);
+
+			if (_connection!.IsOpen)
+			{
+				Console.WriteLine("RabbitMQ Connection Open, Sending message...");
+				SendMessage(message);
+			}
+			else
+			{
+				Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
+			}
+		}
+	}  
 }

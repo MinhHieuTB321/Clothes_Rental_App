@@ -33,7 +33,6 @@ namespace OrderService.WebApi.Controllers
         /// Get customer by id
         /// </summary>
         [Authorize]
-        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {

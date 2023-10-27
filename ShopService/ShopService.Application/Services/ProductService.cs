@@ -33,7 +33,6 @@ namespace ShopService.Application.Services
             await AddImageAsync(productCreateModel.File!,result.Id);
             if (!await _unitOfWork.SaveChangeAsync()) throw new Exception("There is an error in the system.");
             return _mapper.Map<ProductReadModel>(result);
-
         }
         public async Task AddImageAsync(IEnumerable<IFormFile> files, Guid productId)
         {

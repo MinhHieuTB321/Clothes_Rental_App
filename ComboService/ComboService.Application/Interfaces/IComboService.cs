@@ -15,5 +15,6 @@ namespace ComboService.Application.Interfaces
         Task<ComboResponseModel> DeleteCombo(Guid Id); 
         Task<ComboResponseModel> UpdateCombo(Guid Id, UpdateComboRequestModel request);
         Task<ComboResponseModel> CreateCombo(CreateComboRequestModel request);
-    }
+        Task<List<ProductComboResponseModel>> AddProductCombo(Guid comboId, List<ProductComboRequestModel> request);
+	}
 }

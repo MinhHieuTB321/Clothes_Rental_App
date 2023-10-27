@@ -6,6 +6,8 @@ namespace UserService.Application.AsyncDataServices
     public interface IMessageBusClient
     {
         void PublishedUpdateOrder(OrderUpdatePublishedModel model);
-        void PublishedUser(UserCreateModel model);
-    }
+        void PublishedUser(UserReadModel model);
+		void UpdatedUser(UserReadModel model);
+		void DeletedUser(UserReadModel model);
+	}
 }

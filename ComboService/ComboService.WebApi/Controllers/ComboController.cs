@@ -11,19 +11,24 @@ namespace ComboService.WebApi.Controllers
     public class ComboController : BaseController
     {
         private readonly IComboService _service;
-		private readonly IMessageBusClient _messageBusClient;
+        private readonly IMessageBusClient _messageBusClient;
 
-		public ComboController(IComboService service,IMessageBusClient messageBus)
+        public ComboController(IComboService service, IMessageBusClient messageBus)
         {
             _service = service;
             _messageBusClient = messageBus;
         }
 
-		/// <summary>
-		/// Get all combo
-		/// </summary>
-		[Authorize]
-		[HttpGet]
+        //public ComboController(IComboService comboService)
+        //{
+        //    _service=comboService;
+        //}
+
+        /// <summary>
+        /// Get all combo
+        /// </summary>
+        [Authorize]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<ComboResponseModel>>> GetAll()
         {
             var rs = await _service.GetCombos();
@@ -35,9 +40,9 @@ namespace ComboService.WebApi.Controllers
         /// </summary>
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ComboResponseModel>> GetComboById(Guid Id)
+        public async Task<ActionResult<ComboResponseModel>> GetComboById(Guid id)
         {
-            var rs = await _service.GetComboByGuid(Id);
+            var rs = await _service.GetComboByGuid(id);
             return Ok(rs);
         }
 
@@ -46,29 +51,56 @@ namespace ComboService.WebApi.Controllers
         /// </summary>
         [Authorize(Roles = nameof(RoleEnum.Owner))]
         [HttpPost]
-        public async Task<ActionResult<ComboResponseModel>> CreateCombo([FromBody] CreateComboRequestModel request)
+        public async Task<ActionResult<ComboResponseModel>> CreateCombo([FromForm] CreateComboRequestModel request)
         {
             var rs = await _service.CreateCombo(request);
+            try
+            {
+                _messageBusClient.PublishedCombo(rs);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+            }
+            return CreatedAtAction(nameof(GetComboById), new {id=rs.Id},rs);
+        }
+
+		/// <summary>
+		/// Create combo
+		/// </summary>
+		[Authorize(Roles = nameof(RoleEnum.Owner))]
+		[HttpPost("{id}/products-combo")]
+		public async Task<ActionResult<ComboResponseModel>> CreateProductCombo(Guid id,List<ProductComboRequestModel> request)
+		{
+			var rs = await _service.AddProductCombo(id,request);
 			try
 			{
-				_messageBusClient.PublishedCombo(rs);
+				_messageBusClient.PublishedCombo(await _service.GetComboByGuid(id));
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
 			}
-			return CreatedAtAction(nameof(GetComboById), new {id=rs.Id},rs);
-        }
+			return StatusCode(StatusCodes.Status201Created, rs);
+		}
 
-        /// <summary>
-        /// Update combo
-        /// </summary>
-        [Authorize(Roles = nameof(RoleEnum.Owner))]
+		/// <summary>
+		/// Update combo
+		/// </summary>
+		[Authorize(Roles = nameof(RoleEnum.Owner))]
         [HttpPut("{id}")]
         public async Task<ActionResult<ComboResponseModel>> UpdateCombo(Guid id, [FromBody] UpdateComboRequestModel request)
         {
             var rs = await _service.UpdateCombo(id, request);
-            return NoContent();
+			try
+			{
+				_messageBusClient.UpdatedCombo(rs);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+			}
+			return NoContent();
         }
 
         /// <summary>
@@ -79,7 +111,15 @@ namespace ComboService.WebApi.Controllers
         public async Task<ActionResult<ComboResponseModel>> DeleteCombo(Guid id)
         {
             var rs = await _service.DeleteCombo(id);
-            return NoContent();
+			try
+			{
+				_messageBusClient.DeletedCombo(rs);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+			}
+			return NoContent();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ShopService.Application.ViewModels.Images;
 
 namespace ShopService.Application.ViewModels.Products
 {
@@ -22,6 +23,7 @@ namespace ShopService.Application.ViewModels.Products
         public Guid ShopId { get; set; } = default!;
         public Guid CategoryId { get; set; } = default!;
         public string CategoryName { get; set; } = default!;
+        public ICollection<ImageReadModel> ProductImages { get; set; } = default!;
         public string? Event { get; set; } = "Product_Published";
     }
 }

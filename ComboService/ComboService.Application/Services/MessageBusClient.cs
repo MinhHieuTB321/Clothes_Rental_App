@@ -69,9 +69,43 @@ namespace ComboService.Application.Services
 			}
 		}
 
-		void IMessageBusClient.PublishedCombo(ComboResponseModel model)
+		public void PublishedCombo(ComboResponseModel model)
 		{
 			var comboPubblishModel = _mapper.Map<ComboPublishedModel>(model);
+			var message = JsonSerializer.Serialize(comboPubblishModel);
+
+			if (_connection!.IsOpen)
+			{
+				Console.WriteLine("RabbitMQ Connection Open, Sending message...");
+				SendMessage(message);
+			}
+			else
+			{
+				Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
+			}
+		}
+
+		public void UpdatedCombo(ComboResponseModel model)
+		{
+			var comboPubblishModel = _mapper.Map<ComboPublishedModel>(model);
+			comboPubblishModel.Event = "Updated_Combo";
+			var message = JsonSerializer.Serialize(comboPubblishModel);
+
+			if (_connection!.IsOpen)
+			{
+				Console.WriteLine("RabbitMQ Connection Open, Sending message...");
+				SendMessage(message);
+			}
+			else
+			{
+				Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
+			}
+		}
+
+		public void DeletedCombo(ComboResponseModel model)
+		{
+			var comboPubblishModel = _mapper.Map<ComboPublishedModel>(model);
+			comboPubblishModel.Event = "Deleted_Combo";
 			var message = JsonSerializer.Serialize(comboPubblishModel);
 
 			if (_connection!.IsOpen)

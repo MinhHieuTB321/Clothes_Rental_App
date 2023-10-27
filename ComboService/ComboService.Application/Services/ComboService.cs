@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using ComboService.Application.Commons;
 using ComboService.Application.GlobalExceptionHandling;
 using ComboService.Application.Interfaces;
+using ComboService.Application.ViewModels.PublishedModels;
 using ComboService.Application.ViewModels.Request;
 using ComboService.Application.ViewModels.Response;
 using ComboService.Domain.Entities;
 using ComboService.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +21,7 @@ namespace ComboService.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+
         public CombosService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
@@ -26,58 +30,21 @@ namespace ComboService.Application.Services
 
         public async Task<ComboResponseModel> CreateCombo(CreateComboRequestModel request)
         {
-            try
+            var checkCombo = _unitOfWork.Repository<Combo>().Find(x => x.ComboName.Equals(request.ComboName));
+            if (checkCombo != null)
             {
-                var checkCombo = _unitOfWork.Repository<Combo>().Find(x => x.ComboName.Equals(request.ComboName));
-                if (checkCombo != null)
-                {
-                    throw new Exception("Combo all ready exist!!!");
-                }
-
-                Combo combo = new Combo();
-                combo.ComboName = request.ComboName;
-                combo.Quantity = request.Quantity;
-                combo.Status = request.Status;
-                combo.ShopId = request.ShopId;
-                combo.Shop = _unitOfWork.Repository<Shop>().Find(x => x.Id.Equals(request.ShopId));
-
-                #region Product Combos
-                List<ProductCombo> listProductCombo = new List<ProductCombo>();
-                List<ProductComboResponseModel> listProductComboResponse = new List<ProductComboResponseModel>();
-                combo.TotalValue = 0;
-
-                foreach(var detail in request.ProductCombos)
-                {
-                    ProductCombo productCombo = new ProductCombo();
-                    productCombo.ProductId = detail.ProductId;
-                    productCombo.Quantity = detail.Quantity;
-                    productCombo.ComboId = combo.Id;
-                    listProductCombo.Add(productCombo);
-
-                    var productComboResult = _mapper.Map<ProductCombo, ProductComboResponseModel>(productCombo);
-                    listProductComboResponse.Add(productComboResult);
-
-                    //add totalvalue for combo
-                    var productDetail = _unitOfWork.Repository<Product>().Find(x => x.Id.Equals(detail.ProductId));
-                    if(productDetail == null)
-                    {
-                        throw new Exception("Not Found");
-                    }
-                    combo.TotalValue = combo.TotalValue + (productDetail.Price * detail.Quantity);
-                }
-
-                #endregion
-                combo.ProductCombos = listProductCombo;
-
-                await _unitOfWork.Repository<Combo>().InsertAsync(combo);
-                await _unitOfWork.CommitAsync();
-
-                return _mapper.Map<Combo, ComboResponseModel>(combo);
+                throw new Exception("Combo all ready exist!!!");
             }
-            catch(Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var combo= _mapper.Map<Combo>(request);
+            var fileResponse= await request.File.UploadFileAsync("Combo");
+            combo.FileName=fileResponse.FileName;
+            combo.FileUrl=fileResponse.URL;
+
+            await _unitOfWork.Repository<Combo>().InsertAsync(combo);
+            await _unitOfWork.CommitAsync();
+
+            var result= _mapper.Map<ComboResponseModel>(combo);
+            return result;
         }
 
         public async Task<ComboResponseModel> DeleteCombo(Guid Id)
@@ -91,7 +58,8 @@ namespace ComboService.Application.Services
                 }
                 _unitOfWork.Repository<Combo>().SoftRemove(combo);
                 await _unitOfWork.CommitAsync();
-                return _mapper.Map<Combo, ComboResponseModel>(combo);
+                var result= _mapper.Map<Combo, ComboResponseModel>(combo);
+                return result;
             }
             catch(Exception ex)
             {
@@ -101,17 +69,42 @@ namespace ComboService.Application.Services
 
         public async Task<ComboResponseModel> GetComboByGuid(Guid Id)
         {
-            var combo = await _unitOfWork.Repository<Combo>().GetAll().Where(x => x.Id.Equals(Id)).FirstOrDefaultAsync();
+            var combo = await _unitOfWork.Repository<Combo>()
+                .GetAll()
+                .Where(x => x.Id.Equals(Id))
+                .Include(x=>x.Shop)
+                .Include(x=>x.PriceLists)
+                .FirstOrDefaultAsync();
             if (combo is not null)
             {
-                return _mapper.Map<Combo, ComboResponseModel>(combo);
+                var result= _mapper.Map<Combo, ComboResponseModel>(combo);
+                result.ProductCombos=await GetProductComboByComboId(combo.Id);
+                return result;
             }
             else throw new Exception("Not found");
         }
 
+
+        private async Task<List<ProductComboResponseModel>> GetProductComboByComboId(Guid Id)
+        {
+            var productCombos = await _unitOfWork.Repository<ProductCombo>()
+                .GetAll()
+                .Where(x => x.ComboId.Equals(Id))
+                .Include(x=>x.Product)
+				.ThenInclude(x => x.ProductImages)
+				.Include(x=>x.Combo)
+                .ThenInclude(x=>x.Shop)
+                .ToListAsync();
+            if (!productCombos.Any()) return null;
+            return _mapper.Map<List<ProductComboResponseModel>>(productCombos);
+        }
+
         public async Task<IEnumerable<ComboResponseModel>> GetCombos()
         {
-           var combos = _unitOfWork.Repository<Combo>().GetAll().Include(x => x.ProductCombos).ToList();
+           var combos = await _unitOfWork.Repository<Combo>()
+                .GetAll()
+                .Include(x=>x.Shop)
+                .ToListAsync();
             if (combos.Count > 0)
             {
                 combos = combos.OrderByDescending(x => x.CreationDate).ToList();
@@ -123,24 +116,44 @@ namespace ComboService.Application.Services
 
         public async Task<ComboResponseModel> UpdateCombo(Guid Id, UpdateComboRequestModel request)
         {
-            try
+            Combo combo = null;
+            combo = _unitOfWork.Repository<Combo>().Find(x => x.Id.Equals(Id)&&x.IsDeleted==false);
+            if(combo == null)
             {
-                Combo combo = null;
-                combo = _unitOfWork.Repository<Combo>().Find(x => x.Id.Equals(Id));
-                if(combo == null)
-                {
-                    throw new NotFoundException("Combo is not exist!");
-                }
-                _mapper.Map<UpdateComboRequestModel, Combo>(request, combo);
-                await _unitOfWork.Repository<Combo>().UpdateDetached(combo);
-                await _unitOfWork.CommitAsync();
-                return _mapper.Map<Combo, ComboResponseModel>(combo);
-
+                throw new NotFoundException("Combo is not exist!");
             }
-            catch (Exception ex)
-            {
-                throw new Exception();
-            }
+            _mapper.Map<UpdateComboRequestModel, Combo>(request, combo);
+            await _unitOfWork.Repository<Combo>().UpdateDetached(combo);
+            await _unitOfWork.CommitAsync();
+            var result= _mapper.Map<Combo, ComboResponseModel>(combo);
+            return result;
         }
-    }
+
+
+		public async Task<List<ProductComboResponseModel>> AddProductCombo(Guid comboId,List<ProductComboRequestModel> request)
+		{
+			var combo = await _unitOfWork.Repository<Combo>()
+			  .GetAll().Where(x => x.Id.Equals(comboId)&& x.IsDeleted==false).FirstOrDefaultAsync();
+			if (combo is null) throw new Exception($"Not found combo with Id-{comboId}");
+			var productCombos = _mapper.Map<List<ProductCombo>>(request);
+			await _unitOfWork.Repository<ProductCombo>().InsertRangeAsync(productCombos.AsQueryable());
+			await _unitOfWork.CommitAsync();
+            await UpdateTotal(combo);
+			return _mapper.Map<List<ProductComboResponseModel>>(productCombos);
+		}
+
+        private async Task UpdateTotal(Combo combo)
+        {
+			var productCombos = await _unitOfWork.Repository<ProductCombo>()
+			   .GetAll()
+			   .Where(x => x.ComboId.Equals(combo.Id))
+			   .Include(x => x.Product)
+			   .ToListAsync();
+			var comboResponse = _mapper.Map<Combo, ComboResponseModel>(combo);
+            comboResponse.TotalValue = productCombos.Sum(x => x.Product.Price);
+            combo.TotalValue=comboResponse.TotalValue;
+			await _unitOfWork.Repository<Combo>().UpdateDetached(combo);
+			await _unitOfWork.CommitAsync();
+		}
+	}
 }

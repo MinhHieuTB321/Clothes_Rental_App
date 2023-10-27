@@ -21,32 +21,33 @@ namespace UserService.Application.Services
             _mapper = mapper;
         }
 
-
-
-        public async Task<List<UserReadModel>> GetAllUserByRole(string role)
+        public async Task<UserReadModel> GetUserById(Guid id)
         {
-            var user = await _unitOfWork.UserRepository.FindListByField(x => x.Role == role, x => x.Wallets!);
-            var result = _mapper.Map<List<UserReadModel>>(user);
-            for (int i = 0; i < result.Count; i++)
-            {
-                var wallet = user[i].Wallets!.FirstOrDefault(x => x.IsDeleted == false);
-                result[i].WalletId = wallet!.Id;
-                result[i].Balance = wallet!.Balance;
-            }
-
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(id, x => x.Wallets!);
+            if(user==null) throw new NotFoundException($"User with Id-{id} is not exist!");
+            var result = _mapper.Map<UserReadModel>(user);
+            var wallet = user.Wallets!.FirstOrDefault(x => x.IsDeleted == false);
+            result.WalletId = wallet!.Id;
+            result.Balance = wallet!.Balance; 
+            result.Payments=await GetPaymentsByUserId(id);
             return result;
         }
 
 
-        private async Task<PaymentReadModel> GetOwnerById(PaymentReadModel payment)
+        public async Task<List<PaymentReadModel>> GetPaymentsByUserId(Guid id)
         {
-            var owner = await _unitOfWork.UserRepository.GetByIdAsync(payment.OwnerId);
-            if (owner == null) throw new NotFoundException($"Owner is not exist {payment.OwnerId}");
-            payment.OwnerName = owner.Name;
-            payment.Phone = owner.Phone;
-            return payment;
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+            if (user == null) throw new NotFoundException($"User with Id-{id} is not exist!");
+            switch (user.Role)
+            {
+                case nameof(RoleEnums.Customer):
+                    return await GetPaymentsByCustomerId(id); 
+                case nameof(RoleEnums.Owner):
+                    return await GetPaymentsByOwnerId(id);
+                default:
+                    return new List<PaymentReadModel>();
+            }
         }
-
 
         public async Task<List<PaymentReadModel>> GetPaymentsByCustomerId(Guid userId)
         {
@@ -61,8 +62,6 @@ namespace UserService.Application.Services
             return result;
         }
 
-
-
         public async Task<List<PaymentReadModel>> GetPaymentsByOwnerId(Guid id)
         {
             var payments = await _unitOfWork.PaymentRepository.FindListByField(x => x.OwnerId == id && x.Type!.Equals("Receive"), x => x.Transactions!);
@@ -76,53 +75,56 @@ namespace UserService.Application.Services
             return result;
         }
 
-        public async Task<List<PaymentReadModel>> GetPaymentsByUserId(Guid id)
+      
+        private async Task<PaymentReadModel> GetOwnerById(PaymentReadModel payment)
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
-            var result = new List<PaymentReadModel>();
-            if (user == null) throw new NotFoundException($"User with Id-{id} is not exist!");
-            switch (user.Role)
-            {
-                case nameof(RoleEnums.Customer):
-                    return await GetPaymentsByCustomerId(id); 
-                case nameof(RoleEnums.Owner):
-                    return await GetPaymentsByOwnerId(id);
-                default:
-                    throw new NotImplementedException("");
-            }
+            var owner = await _unitOfWork.UserRepository.GetByIdAsync(payment.OwnerId);
+            if (owner == null) throw new NotFoundException($"Owner is not exist {payment.OwnerId}");
+            payment.OwnerName = owner.Name;
+            payment.Phone = owner.Phone;
+            return payment;
         }
+
 
         public async Task<UserReadModel> CreateUser(UserCreateModel model)
         {
             var user= _mapper.Map<User>(model);
-            var result= await _unitOfWork.UserRepository.AddAsync(user);
-            await AddWallet(result.Id);
+            user= await _unitOfWork.UserRepository.AddAsync(user);
+            var wallet= await AddWallet(user.Id);
             await _unitOfWork.SaveChangeAsync();
-            return _mapper.Map<UserReadModel>(result);
+            var result= _mapper.Map<UserReadModel>(user);
+            result.WalletId=wallet.Id;
+            result.Balance=wallet.Balance;
+            return result;
         }
 
-        private async Task AddWallet(Guid userId){
+        private async Task<Wallet> AddWallet(Guid userId){
             var wallet= new Wallet{
                 UserId=userId,
                 Balance=1
             };
 
-            await _unitOfWork.WalletRepository.AddAsync(wallet);
+           return await _unitOfWork.WalletRepository.AddAsync(wallet);
         }
 
 
-        public async Task<UserReadModel> GetUserById(Guid id)
-        {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(id, x => x.Wallets!);
-            if(user==null) throw new NotFoundException($"User with Id-{id} is not exist!");
-            var result = _mapper.Map<UserReadModel>(user);
-            var wallet = user.Wallets!.FirstOrDefault(x => x.IsDeleted == false);
-            result.WalletId = wallet!.Id;
-            result.Balance = wallet!.Balance; 
-            result.Payments=await GetPaymentsByUserId(id);
-            return result;
-        }
+		public async Task<UserReadModel> UpdateUser(UserUpdateModel model)
+		{
+			var user = await _unitOfWork.UserRepository.GetByIdAsync(model.Id, x => x.Wallets!);
+			if (user == null) throw new NotFoundException($"User with Id-{model.Id} is not exist!");
+            user = _mapper.Map(model, user);
+            _unitOfWork.UserRepository.Update(user);
+            await _unitOfWork.SaveChangeAsync();
+            return _mapper.Map<UserReadModel>(user);
+		}
 
-        
-    }
+		public async Task<UserReadModel> DeleteUser(Guid id)
+		{
+			var user = await _unitOfWork.UserRepository.GetByIdAsync(id, x => x.Wallets!);
+			if (user == null) throw new NotFoundException($"User with Id-{id} is not exist!");
+			_unitOfWork.UserRepository.SoftRemove(user);
+			await _unitOfWork.SaveChangeAsync();
+			return _mapper.Map<UserReadModel>(user);
+		}
+	}
 }

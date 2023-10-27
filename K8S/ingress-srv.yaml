@@ -66,6 +66,13 @@ spec:
                 name: combos-clusterip-srv
                 port:
                   number: 80
+          - path: /api/products-combo
+            pathType: Prefix
+            backend:
+              service:
+                name: combos-clusterip-srv
+                port:
+                  number: 80
           - path: /api/prices
             pathType: Prefix
             backend:

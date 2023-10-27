@@ -25,7 +25,6 @@ namespace OrderService.Infrastructures.Migrations
             modelBuilder.Entity("OrderService.Domain.Entities.Combo", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ComboName")
@@ -43,6 +42,14 @@ namespace OrderService.Infrastructures.Migrations
 
                     b.Property<DateTime?>("DeletionDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -63,6 +70,9 @@ namespace OrderService.Infrastructures.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<double>("TotalValue")
+                        .HasColumnType("float");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ShopId");
@@ -73,7 +83,6 @@ namespace OrderService.Infrastructures.Migrations
             modelBuilder.Entity("OrderService.Domain.Entities.Customer", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")

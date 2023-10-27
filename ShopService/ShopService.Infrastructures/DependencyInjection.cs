@@ -18,7 +18,7 @@ namespace ShopService.Infrastructures
         {
 
             services.AddScoped<IMessageBusClient, MessageBusClient>();
-            services.AddScoped<IEventProcessor,EventProcessor>();
+            services.AddScoped<IEventProcessor, EventProcessor>();
             services.AddHostedService<MessageBusSubcriber>();
             #region DI_REPOSITORIES
             services.AddScoped<IUnitOfWork, UnitOfWork>();

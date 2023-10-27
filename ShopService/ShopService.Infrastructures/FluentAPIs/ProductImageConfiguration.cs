@@ -15,7 +15,6 @@ namespace ShopService.Infrastructures.FluentAPIs
         {
             builder.HasKey(x => x.Id);
             builder.HasOne(x => x.Product).WithMany(x => x.ProductImages).HasForeignKey(x => x.ProductId);
-
         }
     }
 }

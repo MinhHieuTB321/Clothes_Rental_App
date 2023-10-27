@@ -11,8 +11,15 @@ namespace ShopService.Application.Interfaces
 {
     public interface IMessageBusClient
     {
-        void PublishedNewOwner(OwnerReadModel model);
         void PublishedNewShop(ShopReadModel model);
+
+        void UpdatedShop(ShopReadModel model);
+
+        void DeletedShop(ShopReadModel model);
         void PublishedNewProduct(ProductReadModel model);
+
+        void UpdatedProduct(ProductReadModel model);
+
+        void DeletedProduct(ProductReadModel model);
     }
 }

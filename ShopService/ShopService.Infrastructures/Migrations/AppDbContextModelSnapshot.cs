@@ -55,13 +55,12 @@ namespace ShopService.Infrastructures.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categorys");
                 });
 
             modelBuilder.Entity("ShopService.Domain.Entities.Owner", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CreatedBy")
@@ -109,7 +108,7 @@ namespace ShopService.Infrastructures.Migrations
                     b.HasIndex("Phone")
                         .IsUnique();
 
-                    b.ToTable("Owner");
+                    b.ToTable("Owners");
                 });
 
             modelBuilder.Entity("ShopService.Domain.Entities.Product", b =>
@@ -184,7 +183,7 @@ namespace ShopService.Infrastructures.Migrations
 
                     b.HasIndex("ShopId");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("ShopService.Domain.Entities.ProductImage", b =>
@@ -304,7 +303,7 @@ namespace ShopService.Infrastructures.Migrations
                     b.HasIndex("ShopPhone")
                         .IsUnique();
 
-                    b.ToTable("Shop");
+                    b.ToTable("Shops");
                 });
 
             modelBuilder.Entity("ShopService.Domain.Entities.Product", b =>

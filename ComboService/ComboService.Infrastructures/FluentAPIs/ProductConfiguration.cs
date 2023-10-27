@@ -22,6 +22,8 @@ namespace ComboService.Infrastructures.FluentAPIs
                 .HasForeignKey(x => x.RootProductId);
             builder.HasMany(x => x.ProductCombos).WithOne(x => x.Product)
                 .IsRequired(false);
-        }
+
+			builder.HasMany(x => x.ProductImages).WithOne(x => x.Product).HasForeignKey(x => x.ProductId);
+		}
     }
 }

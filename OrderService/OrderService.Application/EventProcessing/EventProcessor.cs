@@ -20,8 +20,14 @@ namespace OrderService.Application.EventProcessing
     {
         OrderUpdatePublished,
         ShopPublished,
+        ShopUpdated,
+        ShopDeleted,
         CustomerPublished,
         ComboPublished,
+        ComboUpdated,
+        ComboDeleted,
+        CustomerUpdated,
+        CustomerDeleted,
         Undetermined
     }
     public class EventProcessor : IEventProcessor
@@ -47,14 +53,173 @@ namespace OrderService.Application.EventProcessing
                 case EventType.ShopPublished:
                     await AddShop(message);
                     break;
+                case EventType.ShopUpdated:
+                    await UpdateShop(message);
+                    break;
+                case EventType.ShopDeleted:
+                    await DeleteShop(message);
+                    break;
                 case EventType.CustomerPublished:
                     await AddCustomer(message);
+                    break;
+                case EventType.CustomerUpdated:
+                    await UpdateCustomer(message);
+                    break;
+                case EventType.CustomerDeleted:
+                    await DeleteCustomer(message);
                     break;
                 case EventType.ComboPublished:
                     await AddCombo(message);
                     break;
+                case EventType.ComboUpdated:
+                    await UpdateCombo(message);
+                    break;
+                case EventType.ComboDeleted:
+                    await DeleteCombo(message);
+                    break;
                 default:
                     break;
+            }
+        }
+
+        private async Task DeleteShop(string message)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var model = JsonSerializer.Deserialize<ShopCreateModel>(message);
+
+                try
+                {
+                    var shop= await unitOfWork.ShopRepository.GetByIdAsync(model!.Id);
+                    if(shop!=null){
+                        unitOfWork.ShopRepository.SoftRemove(shop);
+                        await unitOfWork.SaveChangesAsync();
+                        Console.WriteLine($"--> Shop Deleted!");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Could not delete shop to Db {ex.Message}");
+                }
+            }
+        }
+
+        private async Task UpdateShop(string message)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var model = JsonSerializer.Deserialize<ShopCreateModel>(message);
+
+                try
+                {
+                    var shop= await unitOfWork.ShopRepository.GetByIdAsync(model!.Id);
+                    if(shop!=null){
+                        shop = _mapper.Map<Shop>(model);
+                        unitOfWork.ShopRepository.Update(shop);
+                        await unitOfWork.SaveChangesAsync();
+                        Console.WriteLine($"--> Shop Updated!");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Could not update shop to Db {ex.Message}");
+                }
+            }
+        }
+
+        private async Task DeleteCustomer(string message)
+        {
+            using(var scope= _scopeFactory.CreateScope())
+            {
+                var unitOfWork= scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var model = JsonSerializer.Deserialize<CustomerPublishedModel>(message);
+
+                try
+                {   
+                    var user= await unitOfWork.CustomerRepository.GetByIdAsync(model!.Id);
+                    if(user!=null)
+                    {
+                        unitOfWork.CustomerRepository.SoftRemove(user);
+                        await unitOfWork.SaveChangesAsync();
+                        Console.WriteLine($"--> customer Deleted!");
+                    }
+                }   
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"--> Could not delete customer to Db {ex.Message}");
+                }
+            }
+        }
+
+        private async Task UpdateCustomer(string message)
+        {
+            using(var scope= _scopeFactory.CreateScope())
+            {
+                var unitOfWork= scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var model = JsonSerializer.Deserialize<CustomerPublishedModel>(message);
+
+                try
+                {   
+                    var user= await unitOfWork.CustomerRepository.GetByIdAsync(model!.Id);
+                    if(user!=null)
+                    {
+                        user= _mapper.Map(model,user);
+                        unitOfWork.CustomerRepository.Update(user);
+                        await unitOfWork.SaveChangesAsync();
+                        Console.WriteLine($"--> customer Updated!");
+                    }
+                }   
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"--> Could not update customer to Db {ex.Message}");
+                }
+            }
+        }
+
+        private async Task DeleteCombo(string message)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var comboCreateModel = JsonSerializer.Deserialize<ComboCreateModel>(message);
+
+                try
+                {
+                    var combo = await unitOfWork.ComboRepository.GetByIdAsync(comboCreateModel!.Id);
+                    unitOfWork.ComboRepository.SoftRemove(combo!);
+                    await unitOfWork.SaveChangesAsync();
+                    Console.WriteLine($"--> Combo Deleted!");
+                    
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Could not delete combo to Db {ex.Message}");
+                }
+            }
+        }
+
+        private async Task UpdateCombo(string message)
+        {
+           using (var scope = _scopeFactory.CreateScope())
+            {
+                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var comboCreateModel = JsonSerializer.Deserialize<ComboCreateModel>(message);
+
+                try
+                {
+                    var combo = await unitOfWork.ComboRepository.GetByIdAsync(comboCreateModel!.Id);
+                    combo = _mapper.Map(comboCreateModel,combo);
+                    unitOfWork.ComboRepository.Update(combo!);
+                    await unitOfWork.SaveChangesAsync();
+                    Console.WriteLine($"--> Combo Updated!");
+                    
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Could not update combo to Db {ex.Message}");
+                }
             }
         }
 
@@ -82,7 +247,7 @@ namespace OrderService.Application.EventProcessing
 
         private async Task AddCustomer(string message)
         {
-             using(var scope= _scopeFactory.CreateScope())
+            using(var scope= _scopeFactory.CreateScope())
             {
                 var unitOfWork= scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
                 var customerPublishedModel = JsonSerializer.Deserialize<CustomerPublishedModel>(message);
@@ -116,12 +281,12 @@ namespace OrderService.Application.EventProcessing
                     var shop = _mapper.Map<Shop>(shopCreateModel);
                     await unitOfWork.ShopRepository.AddAsync(shop);
                     await unitOfWork.SaveChangesAsync();
-                    Console.WriteLine($"--> Order updated!");
+                    Console.WriteLine($"--> Shop Added!");
                     
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"--> Could not update order to Db {ex.Message}");
+                    Console.WriteLine($"--> Could not Add shop to Db {ex.Message}");
                 }
             }
         }
@@ -170,17 +335,35 @@ namespace OrderService.Application.EventProcessing
                 case "OrderUpdate_Published":
                     Console.WriteLine("-->Order Update Published Event Detected");
                     return EventType.OrderUpdatePublished;
-                case "Shop_Published":
-                    Console.WriteLine("-->Shop Published Event Detected");
-                    return EventType.ShopPublished;
-                case "Customer_Published":
-                    Console.WriteLine("-->Customer Published Event Detected");
-                    return EventType.CustomerPublished;
                 case "Combo_Published":
                     Console.WriteLine("-->Combo Published Event Detected");
                     return EventType.ComboPublished;
+                case "Updated_Combo":
+                    Console.WriteLine("-->Updated Combo Event Detected");
+                    return EventType.ComboPublished;
+                case "Deleted_Combo":
+                    Console.WriteLine("-->Deleted Combo Event Detected");
+                    return EventType.ComboPublished;
+                case "Shop_Published":
+                    Console.WriteLine("-->Shop Published Event Detected");
+                    return EventType.ShopPublished;
+                case "Shop_Updated":
+                    Console.WriteLine("-->Shop Updated Event Detected");
+                    return EventType.ShopUpdated;
+                case "Shop_Deleted":
+                    Console.WriteLine("-->Shop Deleted Event Detected");
+                    return EventType.ShopDeleted;
+                case "Customer_Published":
+                    Console.WriteLine("-->Customer Published Event Detected");
+                    return EventType.CustomerPublished;
+                case "Customer_Updated":
+                    Console.WriteLine("-->Customer Updated Event Detected");
+                    return EventType.CustomerUpdated;
+                case "Customer_Deleted":
+                    Console.WriteLine("-->Customer Deleted Event Detected");
+                    return EventType.CustomerDeleted;
                 default:
-                    Console.WriteLine("--> Could not determine the event type");
+                    Console.WriteLine("--> No Event Type Detected!");
                     return EventType.Undetermined;
             }
         }

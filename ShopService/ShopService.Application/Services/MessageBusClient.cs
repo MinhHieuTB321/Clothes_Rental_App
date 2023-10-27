@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using ShopService.Application.Interfaces;
 using ShopService.Application.ViewModels.Owners;
@@ -70,25 +71,10 @@ namespace ShopService.Application.Services
             }
         }
 
-        public void PublishedNewOwner(OwnerReadModel model)
-        {
-
-            var message = JsonSerializer.Serialize(_mapper.Map<OwnerPublishedModel>(model));
-
-            if (_connection!.IsOpen)
-            {
-                Console.WriteLine("RabbitMQ Connection Open, Sending message...");
-                SendMessage(message);
-            }
-            else
-            {
-                Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
-            }
-        }
 
         public void PublishedNewShop(ShopReadModel model)
         {
-            var message = JsonSerializer.Serialize(_mapper.Map<ShopPublishedModel>(model));
+            var message = JsonConvert.SerializeObject(_mapper.Map<ShopPublishedModel>(model));
 
             if (_connection!.IsOpen)
             {
@@ -103,7 +89,75 @@ namespace ShopService.Application.Services
 
         public void PublishedNewProduct(ProductReadModel model)
         {
-            var message = JsonSerializer.Serialize(_mapper.Map<ProductPublishedModel>(model));
+            var message = JsonConvert.SerializeObject(_mapper.Map<ProductPublishedModel>(model));
+
+            if (_connection!.IsOpen)
+            {
+                Console.WriteLine("RabbitMQ Connection Open, Sending message...");
+                SendMessage(message);
+            }
+            else
+            {
+                Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
+            }
+        }
+
+        public void UpdatedShop(ShopReadModel model)
+        {
+            var publishedModel=_mapper.Map<ShopPublishedModel>(model);
+            publishedModel.Event="Shop_Updated";
+            var message = JsonConvert.SerializeObject(publishedModel);
+
+            if (_connection!.IsOpen)
+            {
+                Console.WriteLine("RabbitMQ Connection Open, Sending message...");
+                SendMessage(message);
+            }
+            else
+            {
+                Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
+            }
+        }
+
+        public void DeletedShop(ShopReadModel model)
+        {
+             var publishedModel=_mapper.Map<ShopPublishedModel>(model);
+            publishedModel.Event="Shop_Deleted";
+            var message = JsonConvert.SerializeObject(publishedModel);
+
+            if (_connection!.IsOpen)
+            {
+                Console.WriteLine("RabbitMQ Connection Open, Sending message...");
+                SendMessage(message);
+            }
+            else
+            {
+                Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
+            }
+        }
+
+        public void UpdatedProduct(ProductReadModel model)
+        {
+            var publishedModel=_mapper.Map<ProductPublishedModel>(model);
+            publishedModel.Event="Product_Updated";
+             var message = JsonConvert.SerializeObject(publishedModel);
+
+            if (_connection!.IsOpen)
+            {
+                Console.WriteLine("RabbitMQ Connection Open, Sending message...");
+                SendMessage(message);
+            }
+            else
+            {
+                Console.WriteLine("RabbitMQ Connection Closed, Not sending message...");
+            }
+        }
+
+        public void DeletedProduct(ProductReadModel model)
+        {
+            var publishedModel=_mapper.Map<ProductPublishedModel>(model);
+            publishedModel.Event="Product_Deleted";
+             var message = JsonConvert.SerializeObject(publishedModel);
 
             if (_connection!.IsOpen)
             {

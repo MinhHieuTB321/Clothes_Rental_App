@@ -11,6 +11,8 @@ namespace ShopService.Application.EventProcessing
     enum EventType
     {
         OwnerPublished,
+        OwnerUpdated,
+        OwnerDeleted,
         Undetermined
     }
     public class EventProcessor:IEventProcessor
@@ -33,8 +35,63 @@ namespace ShopService.Application.EventProcessing
                 case EventType.OwnerPublished:
                     await AddOwner(message);
                     break;
+                case EventType.OwnerUpdated:
+                    await UpdateOwner(message);
+                    break;
+                case EventType.OwnerDeleted:
+                    await DeleteOwner(message);
+                    break;
                 default:
                     break;
+            }
+        }
+
+        private async Task DeleteOwner(string message)
+        {
+            using(var scope= _scopeFactory.CreateScope())
+            {
+                var unitOfWork= scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var model = JsonSerializer.Deserialize<OwnerPublishedModel>(message);
+
+                try
+                {   
+                    var user=await unitOfWork.OwnerRepository.GetByIdAsync(model!.Id);
+                    if(user!=null)
+                    {
+                        unitOfWork.OwnerRepository.SoftRemove(user);
+                        await unitOfWork.SaveChangeAsync();
+                        Console.WriteLine($"--> owner Deleted!");
+                    }
+                }   
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"--> Could not delete owner to Db {ex.Message}");
+                }
+            }
+        }
+
+        private async Task UpdateOwner(string message)
+        {
+            using(var scope= _scopeFactory.CreateScope())
+            {
+                var unitOfWork= scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                var model = JsonSerializer.Deserialize<OwnerPublishedModel>(message);
+
+                try
+                {   
+                    var user=await unitOfWork.OwnerRepository.GetByIdAsync(model!.Id);
+                    if(user!=null)
+                    {
+                        user= _mapper.Map(model,user);
+                        unitOfWork.OwnerRepository.Update(user);
+                        await unitOfWork.SaveChangeAsync();
+                        Console.WriteLine($"--> owner Updated!");
+                    }
+                }   
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"--> Could not update owner to Db {ex.Message}");
+                }
             }
         }
 
@@ -43,11 +100,11 @@ namespace ShopService.Application.EventProcessing
             using(var scope= _scopeFactory.CreateScope())
             {
                 var unitOfWork= scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-                var customerPublishedModel = JsonSerializer.Deserialize<OwnerPublishedModel>(message);
+                var model = JsonSerializer.Deserialize<OwnerPublishedModel>(message);
 
                 try
                 {   
-                    var user= _mapper.Map<Owner>(customerPublishedModel);
+                    var user= _mapper.Map<Owner>(model);
                     if(await unitOfWork.OwnerRepository.GetByIdAsync(user.Id) ==null)
                     {
                         await unitOfWork.OwnerRepository.AddAsync(user);
@@ -57,7 +114,7 @@ namespace ShopService.Application.EventProcessing
                 }   
                 catch(Exception ex)
                 {
-                    Console.WriteLine($"--> Could not add user to Db {ex.Message}");
+                    Console.WriteLine($"--> Could not add owner to Db {ex.Message}");
                 }
             }
         }
@@ -75,8 +132,14 @@ namespace ShopService.Application.EventProcessing
                 case "Owner_Published":
                     Console.WriteLine("-->Owner Published Event Detected");
                     return EventType.OwnerPublished;
+                case "Owner_Updated":
+                    Console.WriteLine("-->Owner Updated Event Detected");
+                    return EventType.OwnerUpdated;
+                case "Owner_Deleted":
+                    Console.WriteLine("-->Owner Deleted Event Detected");
+                    return EventType.OwnerDeleted;
                 default:
-                    Console.WriteLine("--> Could not determine the event type");
+                    Console.WriteLine("--> No Event Type Detected!");
                     return EventType.Undetermined;
             }
         }

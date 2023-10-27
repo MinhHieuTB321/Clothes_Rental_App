@@ -10,5 +10,9 @@ namespace ComboService.Application.Interfaces
 	public interface IMessageBusClient
 	{
 		void PublishedCombo(ComboResponseModel model);
+
+		void UpdatedCombo(ComboResponseModel model);
+
+		void DeletedCombo(ComboResponseModel model);
 	}
 }

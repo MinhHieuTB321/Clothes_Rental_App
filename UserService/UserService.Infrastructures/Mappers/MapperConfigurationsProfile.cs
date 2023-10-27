@@ -51,11 +51,12 @@ namespace UserService.Infrastructures.Mappers
                 .ForMember(x => x.Payments, opt => opt.Ignore())
                 .ReverseMap();
             CreateMap<UserCreateModel,User>().ReverseMap();
-            CreateMap<UserPublishedModel,UserCreateModel>().ReverseMap();
+            CreateMap<UserPublishedModel,UserReadModel>().ReverseMap();
+			CreateMap<UserUpdateModel, User>().ReverseMap();
+			#endregion
 
-            #endregion  
-            #region Order
-            CreateMap<OrderReadModel,Order>().ReverseMap();
+			#region Order
+			CreateMap<OrderReadModel,Order>().ReverseMap();
             #endregion
         }
     }

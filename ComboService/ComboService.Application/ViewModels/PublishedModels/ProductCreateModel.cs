@@ -22,5 +22,6 @@ namespace ComboService.Application.ViewModels.PublishedModels
 		public Guid ShopId { get; set; } = default!;
 		public Guid CategoryId { get; set; } = default!;
 		public string CategoryName { get; set; } = default!;
+		public ICollection<ImageReadModel> ProductImages { get; set; } = default!;
 	}
 }

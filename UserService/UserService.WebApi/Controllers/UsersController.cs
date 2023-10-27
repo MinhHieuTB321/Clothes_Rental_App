@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using UserService.Application.AsyncDataServices;
 using UserService.Application.Interfaces;
 using UserService.Application.ViewModels.Users;
+using UserService.Domain.Enums;
 
 namespace UserService.WebApi.Controllers
 {
@@ -38,8 +39,8 @@ namespace UserService.WebApi.Controllers
             var result = await _service.CreateUser(model);
             try
             {
-                if(result!=null){
-                    _messageBusClient.PublishedUser(model);
+                if(result!=null && result.Role!="Admin"){
+                    _messageBusClient.PublishedUser(result);
                 }
             }
             catch (Exception ex)
@@ -48,5 +49,43 @@ namespace UserService.WebApi.Controllers
             }
             return StatusCode(StatusCodes.Status201Created,result);
         }
-    }
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Guid id,UserUpdateModel model)
+        {
+            if (id != model.Id) return BadRequest("Id is not match with model!");
+            var result = await _service.UpdateUser(model);
+			try
+			{
+				if (result != null && result.Role != "Admin")
+				{
+					_messageBusClient.UpdatedUser(result);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+			}
+			return NoContent();
+        }
+
+        [Authorize(Roles = nameof(RoleEnums.Admin))]
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> Delete(Guid id)
+		{
+			var result = await _service.DeleteUser(id);
+			try
+			{
+				if (result != null && result.Role != "Admin")
+				{
+					_messageBusClient.DeletedUser(result);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+			}
+			return NoContent();
+		}
+	}
 }

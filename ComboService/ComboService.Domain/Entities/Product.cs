@@ -28,9 +28,9 @@ namespace ComboService.Domain.Entities
 		public string CategoryName { get; set; } = default!;
 
 		public ICollection<Product>? SubProducts { get; set; }
+		public ICollection<ProductImage> ProductImages { get; set; } = default!;
+		//Category
 
-        //Category
-
-        public ICollection<ProductCombo> ProductCombos { get; set; } = default!;
+		public ICollection<ProductCombo> ProductCombos { get; set; } = default!;
     }
 }

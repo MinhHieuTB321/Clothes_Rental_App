@@ -17,6 +17,11 @@ namespace ShopService.WebApi.Controllers
             _messageBusClient = messageBusClient;
         }
 
+        // public ShopsController(IShopService service)
+        // {
+        //     _service = service;
+        // }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllShop()
@@ -45,10 +50,21 @@ namespace ShopService.WebApi.Controllers
 
         [Authorize(Roles =("Admin,Owner"))]
         [HttpDelete("{id}")]
-        public async Task<IActionResult>DeleteShop(Guid Id)
+        public async Task<IActionResult>DeleteShop(Guid id)
         {
-            var result = await _service.DeleteShop(Id);
+            var result = await _service.DeleteShop(id);
             if(!result) return BadRequest();
+            try
+            {
+                if (result)
+                {
+                    _messageBusClient.UpdatedShop(new ShopReadModel{Id=id});
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+            }
             return NoContent();
         }
 
@@ -81,7 +97,21 @@ namespace ShopService.WebApi.Controllers
         {
             if(id!=model.Id) return BadRequest();
             var result= await _service.UpdateShop(model);
-            if(result is not null) return NoContent();
+            if(result is not null)
+            {
+                try
+                {
+                    if (result != null)
+                    {
+                        _messageBusClient.UpdatedShop(result);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+                }
+                 return NoContent();
+            }
             return BadRequest();
         }
     }

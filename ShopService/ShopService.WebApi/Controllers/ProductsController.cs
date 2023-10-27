@@ -18,6 +18,10 @@ namespace ShopService.WebApi.Controllers
             _messageBusClient = messageBusClient;
         }
 
+        // public ProductsController(IProductService service)
+        // {
+        //     _service = service;
+        // }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllProduct()
@@ -55,7 +59,7 @@ namespace ShopService.WebApi.Controllers
                 {
                     if (result != null)
                     {
-                        _messageBusClient.PublishedNewProduct(result);
+                        _messageBusClient.PublishedNewProduct(await _service.GetByIdAsync(result.Id));
                     }
                 }
                 catch (Exception ex)
@@ -73,7 +77,21 @@ namespace ShopService.WebApi.Controllers
         {
             if (id != model.Id) return BadRequest();
             var result = await _service.UpdateProduct(model);
-            if (result) return NoContent();
+            if (result) 
+            {
+                try
+                {
+                    if (result)
+                    {
+                        _messageBusClient.UpdatedProduct(await _service.GetByIdAsync(id));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+                }
+                return NoContent();
+            }
             else return BadRequest();
         }
 
@@ -83,7 +101,22 @@ namespace ShopService.WebApi.Controllers
         public async Task<IActionResult>DeleteProduct(Guid id)
         {
             var result = await _service.DeleteProduct(id);
-            if (result) return NoContent();
+            if (result) 
+            {
+                try
+                {
+                    if (result)
+                    {
+                        var model=new ProductReadModel{Id=id};
+                        _messageBusClient.DeletedProduct(model);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Could not send asyncchronously: {ex.InnerException}");
+                }
+                return NoContent();
+            }
             return BadRequest();
         }
     }

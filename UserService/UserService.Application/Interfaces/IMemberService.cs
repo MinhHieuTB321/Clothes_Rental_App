@@ -8,7 +8,12 @@ namespace UserService.Application.Interfaces
     {
         Task<UserReadModel> GetUserById(Guid id);   
         Task<UserReadModel> CreateUser(UserCreateModel model);
-        Task<List<PaymentReadModel>> GetPaymentsByCustomerId(Guid id);
+
+		Task<UserReadModel> UpdateUser(UserUpdateModel model);
+
+		Task<UserReadModel> DeleteUser(Guid id);
+
+		Task<List<PaymentReadModel>> GetPaymentsByCustomerId(Guid id);
         Task<List<PaymentReadModel>> GetPaymentsByOwnerId(Guid id);
         Task<List<PaymentReadModel>> GetPaymentsByUserId(Guid id);
     }

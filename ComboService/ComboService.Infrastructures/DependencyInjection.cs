@@ -29,16 +29,16 @@ namespace ComboService.Infrastructures
             services.AddScoped<IPriceListService, PriceListService>();
             services.AddScoped<IShopService, ShopService>();
             services.AddScoped<IProductService, ProductService>();
-			#endregion
+			services.AddScoped<IProductComboService, ProductComboService>();
+            #endregion
 
-			services.AddHostedService<MessageBusSubcriber>();
-			services.AddSingleton<IEventProcessor, EventProcessor>();
-			services.AddSingleton<IMessageBusClient, MessageBusClient>();
+            services.AddHostedService<MessageBusSubcriber>();
+            services.AddSingleton<IEventProcessor, EventProcessor>();
+            services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
-			services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(appConfig.DatabaseConnection);
-                //ptions.UseInMemoryDatabase("InMem");
+                options.UseSqlServer(appConfig.DatabaseConnection);;
             });
 
 

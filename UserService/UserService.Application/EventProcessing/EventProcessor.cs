@@ -75,7 +75,7 @@ namespace UserService.Application.EventProcessing
                     Console.WriteLine("-->Order Published Event Detected");
                     return EventType.OrderPublished;
                 default:
-                    Console.WriteLine("--> Could not determine the event type");
+                    Console.WriteLine("--> No Event Type Detected!");
                     return EventType.Undetermined;
             }
         }
