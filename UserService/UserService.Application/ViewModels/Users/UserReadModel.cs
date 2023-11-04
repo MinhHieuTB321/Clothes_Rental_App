@@ -15,6 +15,7 @@ namespace UserService.Application.ViewModels.Users
         public string Phone { get; set; } = default!;
         public string Gender{get;set;}=default!;
         public string Address{get;set;}=default!;
+        public string Password{get;set;}=default!;
         public string Role { get; set; } = default!;
         public string Status{get;set;}= default!;
         public Guid WalletId { get; set; }

@@ -24,22 +24,22 @@ namespace ShopService.Application.Services
             _mapper = mapper;
             _currentUser = claimService.GetCurrentUser;
         }
-        public async Task<ProductImage?> AddImageAsync(IFormFile file, Guid productId)
+        public async Task<ImageReadModel> AddImageAsync(ImageCreateModel model)
         {
-            var fireBaseFile = await file.UploadFileAsync("Product");
+            var fireBaseFile = await model.File.UploadFileAsync("Product");
             if (fireBaseFile is not null)
             {
                 var productImage = new ProductImage()
                 {
                     FileName = fireBaseFile.FileName,
                     FileUrl = fireBaseFile.URL,
-                    ProductId = productId
+                    ProductId = model.ProductId
                 };
-                await _unitOfWork.ProductImageRepository.AddAsync(productImage);
-                if (await _unitOfWork.SaveChangeAsync()) return (await _unitOfWork.ProductImageRepository.GetAllAsync()).Where(x => x.FileName == fireBaseFile.FileName).First();
+                var result= await _unitOfWork.ProductImageRepository.AddAsync(productImage);
+                if (await _unitOfWork.SaveChangeAsync()) return (_mapper.Map<ImageReadModel>(result));
 
             }
-            return null;
+            throw new NotImplementedException("Error occured at Upload file!");
         }
 
         public async Task<bool> DeleteImage(Guid id)
@@ -47,8 +47,9 @@ namespace ShopService.Application.Services
             var deletedItem = await _unitOfWork.ProductImageRepository.GetByIdAsync(id);
             if (deletedItem != null)
             {
-                _unitOfWork.ProductImageRepository.SoftRemove(deletedItem);
+                _unitOfWork.ProductImageRepository.Delete(deletedItem);
                 var result = await deletedItem.FileName.RemoveFileAsync("Product");
+                await _unitOfWork.SaveChangeAsync();
                 if (result) return true;
                 else throw new Exception("Remove File at Firebase occured");
             }

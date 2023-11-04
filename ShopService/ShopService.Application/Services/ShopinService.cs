@@ -70,12 +70,14 @@ namespace ShopService.Application.Services
         {
             var shop = await _unitOfWork.ShopRepository.GetByIdAsync(shopUpdateModel.Id);
             if (shop is null || shop.OwnerId!=_currentUser) throw new Exception("There any shop to update.");
-            _mapper.Map(shopUpdateModel, shop);
-            var shopLogo = await shopUpdateModel.File.UploadFileAsync("Shop");
-            if (shopLogo != null)
-            {
-                shop.FileUrl = shopLogo.URL;
-                shop.FileName = shopLogo.FileName;
+            shop=_mapper.Map(shopUpdateModel, shop);
+            if(shopUpdateModel.File !=null){
+                var shopLogo = await shopUpdateModel.File!.UploadFileAsync("Shop");
+                if (shopLogo != null)
+                {
+                    shop.FileUrl = shopLogo.URL;
+                    shop.FileName = shopLogo.FileName;
+                }
             }
             _unitOfWork.ShopRepository.Update(shop);
             if (!await _unitOfWork.SaveChangeAsync()) throw new Exception("There is an error in the system.");

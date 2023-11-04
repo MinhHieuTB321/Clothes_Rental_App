@@ -51,7 +51,9 @@ namespace ShopService.Infrastructures.Mapper
             CreateMap<ShopReadModel, Shop>()
                 .ForPath(x=>x.Owner.Name,opt=>opt.MapFrom(x=>x.OwnerName))
                 .ReverseMap();
-            CreateMap<ShopUpdateModel, Shop>().ReverseMap();
+            CreateMap<ShopUpdateModel, Shop>()
+				.ForMember(x => x.FileName, opt => opt.Ignore())
+				.ReverseMap();
 
             #endregion
         }

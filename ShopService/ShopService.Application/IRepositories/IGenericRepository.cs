@@ -1,10 +1,6 @@
-﻿using ShopService.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ShopService.Application.Commons;
+using ShopService.Domain.Entities;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShopService.Application.IRepositories
 {
@@ -18,9 +14,11 @@ namespace ShopService.Application.IRepositories
         void SoftRemove(TEntity entity);
         Task AddRangeAsync(List<TEntity> entities);
         void SoftRemoveRange(List<TEntity> entities);
+
+        void Delete(TEntity entity);
         Task<TEntity> FindByField(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes);
 
-        //Task<Pagination<TEntity>> ToPagination(int pageNumber = 0, int pageSize = 10);
+        Task<Pagination<TEntity>> ToPagination(Expression<Func<TEntity, bool>> expression,int pageNumber = 0, int pageSize = 10, params Expression<Func<TEntity, object>>[] includes);
         Task<List<TEntity>> FindListByField(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes);
        
     }

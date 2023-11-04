@@ -15,6 +15,7 @@ namespace ShopService.Application.ViewModels.Owners
         public string Phone { get; set; } = default!;
         public string Gender{get;set;}=default!;
         public string Address{get;set;}=default!;
+        public string Password{get;set;}=default!;
         public string Status{get;set;}="Active";
     }
 }

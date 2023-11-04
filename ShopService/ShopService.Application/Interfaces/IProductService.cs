@@ -1,11 +1,5 @@
-﻿using ShopService.Application.ViewModels.Products;
-using ShopService.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ShopService.Application.Commons;
+using ShopService.Application.ViewModels.Products;
 
 namespace ShopService.Application.Interfaces
 {
@@ -14,9 +8,9 @@ namespace ShopService.Application.Interfaces
         Task<ProductReadModel> CreateProduct(ProductCreateModel productCreateModel);
         Task<bool> UpdateProduct(ProductUpdateModel productUpdateModel);
         Task<bool> DeleteProduct(Guid id);
-        Task<IEnumerable<ProductReadModel>> GetAllAsync();
+        Task<Pagination<ProductReadModel>> GetAllAsync(int pageNumber = 0, int pageSize = 10);
         Task<ProductReadModel> GetByIdAsync(Guid id);
 
-        Task<List<ProductReadModel>> GetAllSubProductByRootId(Guid id);
+        Task<Pagination<ProductReadModel>> GetAllSubProductByRootId(Guid id,int pageNumber = 0, int pageSize = 10);
     }
 }

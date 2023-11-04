@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ShopService.Application.Commons;
 using ShopService.Application.Interfaces;
 using ShopService.Application.IRepositories;
 using ShopService.Domain.Entities;
@@ -86,24 +87,32 @@ namespace ShopService.Infrastructures.Repositories
             _dbSet.UpdateRange(entities);
         }
 
-        // public async Task<Pagination<TEntity>> ToPagination(int pageIndex = 0, int pageSize = 10)
-        // {
-        //     var itemCount = await _dbSet.CountAsync();
-        //     var items = await _dbSet.Skip(pageIndex * pageSize)
-        //                             .Take(pageSize)
-        //                             .AsNoTracking()
-        //                             .ToListAsync();
+        public async Task<Pagination<TEntity>> ToPagination(Expression<Func<TEntity, bool>> expression,int pageNumber = 0, int pageSize = 10, params Expression<Func<TEntity, object>>[] includes)
+        {
+            var itemCount = await includes
+                            .Aggregate(_dbSet!.AsQueryable(),
+                                (entity, property) => entity.Include(property)).AsNoTracking()
+                            .Where(expression!).CountAsync();
+            var items =await includes
+                                    .Aggregate(_dbSet!.AsQueryable(),
+                                        (entity, property) => entity.Include(property)).AsNoTracking()
+                                    .Where(expression!)
+                                        .OrderByDescending(x => x.CreationDate)
+                                    .Skip(pageNumber * pageSize)
+                                    .Take(pageSize)
+                                    .AsNoTracking()
+                                    .ToListAsync();
 
-        //     var result = new Pagination<TEntity>()
-        //     {
-        //         PageIndex = pageIndex,
-        //         PageSize = pageSize,
-        //         TotalItemsCount = itemCount,
-        //         Items = items,
-        //     };
+            var result = new Pagination<TEntity>()
+            {
+                PageIndex = pageNumber,
+                PageSize = pageSize,
+                TotalItemsCount = itemCount,
+                Items = items,
+            };
 
-        //     return result;
-        // }
+            return result;
+        }
 
         public void UpdateRange(List<TEntity> entities)
         {
@@ -133,6 +142,8 @@ namespace ShopService.Infrastructures.Repositories
             .OrderByDescending(x => x.CreationDate)
             .ToListAsync();
 
-        
+        public void Delete(TEntity entity){
+            _dbSet.Remove(entity);
+        }
     }
 }

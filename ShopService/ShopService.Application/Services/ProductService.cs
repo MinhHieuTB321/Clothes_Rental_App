@@ -5,11 +5,6 @@ using ShopService.Application.GlobalExceptionHandling.Exceptions;
 using ShopService.Application.Interfaces;
 using ShopService.Application.ViewModels.Products;
 using ShopService.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShopService.Application.Services
 {
@@ -61,10 +56,16 @@ namespace ShopService.Application.Services
             else return true;    
         }
 
-        public async Task<IEnumerable<ProductReadModel>> GetAllAsync()
+        public async Task<Pagination<ProductReadModel>> GetAllAsync(int pageNumber = 0, int pageSize = 10)
         {
             
-            var result = _mapper.Map<IEnumerable<ProductReadModel>>(await _unitOfWork.ProductRepository.FindListByField(x=>x.RootProductId==null&& x.IsDeleted==false,x=>x.ProductImages,x=>x.Shop,x=>x.Category));
+            var pagination = await _unitOfWork.ProductRepository.ToPagination(x=>x.RootProductId==null&& x.IsDeleted==false,pageNumber,pageSize,x=>x.ProductImages,x=>x.Shop,x=>x.Category);
+            var result=new Pagination<ProductReadModel>{
+                 PageIndex = pagination.PageIndex,
+                PageSize = pagination.PageSize,
+                TotalItemsCount = pagination.TotalItemsCount,
+                Items = _mapper.Map<ICollection<ProductReadModel>>(pagination.Items),
+            };
             return result;
         }
 
@@ -76,17 +77,25 @@ namespace ShopService.Application.Services
 
         public async Task<bool> UpdateProduct(ProductUpdateModel productUpdateModel)
         {
-            var product=await _unitOfWork.ProductRepository.GetByIdAsync(productUpdateModel.Id);
+            var product=await _unitOfWork.ProductRepository.GetByIdAsync(productUpdateModel.Id,x=>x.Shop);
             if (product is null || product.Shop.OwnerId!=_currentUser) throw new Exception("There is no product to update.");
             _mapper.Map(productUpdateModel,product);
-            _unitOfWork.ProductRepository.Update(product);
+            _unitOfWork.ProductRepository.Update(product); 
             return await _unitOfWork.SaveChangeAsync();
         }
+        
+        
 
-        public async Task<List<ProductReadModel>> GetAllSubProductByRootId(Guid id)
+        public async Task<Pagination<ProductReadModel>> GetAllSubProductByRootId(Guid id,int pageNumber = 0, int pageSize = 10)
         {
-            var result = _mapper.Map<List<ProductReadModel>>(await _unitOfWork.ProductRepository.FindListByField(x=>x.RootProductId==id&& x.IsDeleted==false,x=>x.ProductImages,x=>x.Shop,x=>x.Category));
-            if(result.Count==0) throw new NotFoundException($"There are no sub-product for Id-{id}!");
+            var pagination = await _unitOfWork.ProductRepository.ToPagination(x=>x.RootProductId==id&& x.IsDeleted==false,pageNumber,pageSize,x=>x.ProductImages,x=>x.Shop,x=>x.Category);
+            if(pagination.Items.Count==0) throw new NotFoundException($"There are no sub-product for Id-{id}!");
+            var result=new Pagination<ProductReadModel>{
+                 PageIndex = pagination.PageIndex,
+                PageSize = pagination.PageSize,
+                TotalItemsCount = pagination.TotalItemsCount,
+                Items = _mapper.Map<ICollection<ProductReadModel>>(pagination.Items),
+            };
             return result;
         }
     }

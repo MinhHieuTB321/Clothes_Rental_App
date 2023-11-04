@@ -108,3 +108,10 @@ spec:
                 name: shops-clusterip-srv
                 port:
                   number: 80
+          - path: /api/images
+            pathType: Prefix
+            backend:
+              service:
+                name: shops-clusterip-srv
+                port:
+                  number: 80

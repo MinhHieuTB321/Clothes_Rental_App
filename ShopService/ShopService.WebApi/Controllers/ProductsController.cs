@@ -24,9 +24,9 @@ namespace ShopService.WebApi.Controllers
         // }
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAllProduct()
+        public async Task<IActionResult> GetAllProduct(int pageNumber = 0, int pageSize = 10)
         {
-            var result= await _service.GetAllAsync();
+            var result= await _service.GetAllAsync(pageNumber,pageSize);
             if (result == null) return BadRequest();
             return Ok(result);
         }

@@ -11,7 +11,7 @@ namespace ShopService.Application.Interfaces
 {
     public interface IProductImageService
     {
-        public Task<ProductImage?> AddImageAsync(IFormFile file, Guid productId);
+        public Task<ImageReadModel> AddImageAsync(ImageCreateModel model);
 
 
         public Task<bool> DeleteImage(Guid id);

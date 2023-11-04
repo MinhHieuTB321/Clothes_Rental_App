@@ -11,10 +11,10 @@ namespace ShopService.Application.ViewModels.Shops
     {
         public Guid Id { get; set; }
         public string ShopName { get; set; } = default!;
-       /* public string ShopEmail { get; set; } = default!;
-        public string ShopPhone { get; set; } = default!;*/
+        public string ShopEmail { get; set; } = default!;
+        public string ShopPhone { get; set; } = default!;
         public string Address { get; set; } = default!;
-        public IFormFile File { get; set; } = default!;
+        public IFormFile? File { get; set; } = default!;
 
     }
 }
