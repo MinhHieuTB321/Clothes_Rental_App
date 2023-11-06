@@ -52,16 +52,24 @@ namespace ShopService.Application.Services
         public async Task<IEnumerable<ShopReadModel>> GetAllAsync()
             => _mapper.Map<IEnumerable<ShopReadModel>>(await _unitOfWork.ShopRepository.FindListByField(x=>x.OwnerId==_currentUser,x=>x.Owner));
 
-        public async Task<List<ProductReadModel>> GetAllProductByShopId(Guid shopId)
+        public async Task<Pagination<ProductReadModel>> GetAllProductByShopId(Guid shopId, int pageNumber = 0, int pageSize = 10)
         {
-           var result= await _unitOfWork.ProductRepository.FindListByField(x=>
+           var pagination = await _unitOfWork.ProductRepository.ToPagination(x=>
                                         x.ShopId==shopId &&
                                         x.IsDeleted==false &&
                                         x.RootProduct==null,
+                                        pageNumber, pageSize,
                                         x=>x.Category,x=>x.ProductImages,x=>x.Shop);
-            if(result.Count==0) throw new NotFoundException("There are no products in shop!");
-            return _mapper.Map<List<ProductReadModel>>(result);
-        }
+			if (pagination.Items.Count == 0) throw new NotFoundException("There are no products in shop!");
+			var result = new Pagination<ProductReadModel>
+			{
+				PageIndex = pagination.PageIndex,
+				PageSize = pagination.PageSize,
+				TotalItemsCount = pagination.TotalItemsCount,
+				Items = _mapper.Map<ICollection<ProductReadModel>>(pagination.Items),
+			};
+			return result;
+		}
 
         public async Task<ShopReadModel> GetByIdAsync(Guid id)
             => _mapper.Map<ShopReadModel>(await _unitOfWork.ShopRepository.GetByIdAsync(id,x=>x.Owner));

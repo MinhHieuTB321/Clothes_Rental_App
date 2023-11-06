@@ -89,7 +89,7 @@ namespace ComboService.WebApi.Controllers
 		/// </summary>
 		[Authorize(Roles = nameof(RoleEnum.Owner))]
         [HttpPut("{id}")]
-        public async Task<ActionResult<ComboResponseModel>> UpdateCombo(Guid id, [FromBody] UpdateComboRequestModel request)
+        public async Task<ActionResult<ComboResponseModel>> UpdateCombo(Guid id, [FromForm] UpdateComboRequestModel request)
         {
             var rs = await _service.UpdateCombo(id, request);
 			try

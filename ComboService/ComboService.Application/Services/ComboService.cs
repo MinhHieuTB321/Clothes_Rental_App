@@ -2,18 +2,10 @@
 using ComboService.Application.Commons;
 using ComboService.Application.GlobalExceptionHandling;
 using ComboService.Application.Interfaces;
-using ComboService.Application.ViewModels.PublishedModels;
 using ComboService.Application.ViewModels.Request;
 using ComboService.Application.ViewModels.Response;
 using ComboService.Domain.Entities;
-using ComboService.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ComboService.Application.Services
 {
@@ -116,13 +108,15 @@ namespace ComboService.Application.Services
 
         public async Task<ComboResponseModel> UpdateCombo(Guid Id, UpdateComboRequestModel request)
         {
-            Combo combo = null;
-            combo = _unitOfWork.Repository<Combo>().Find(x => x.Id.Equals(Id)&&x.IsDeleted==false);
+            Combo  combo = _unitOfWork.Repository<Combo>().Find(x => x.Id.Equals(Id)&&x.IsDeleted==false);
             if(combo == null)
             {
                 throw new NotFoundException("Combo is not exist!");
             }
-            _mapper.Map<UpdateComboRequestModel, Combo>(request, combo);
+            combo=_mapper.Map(request, combo);
+            var fileResponse= await request.File.UploadFileAsync("Combo");
+            combo.FileName=fileResponse.FileName;
+            combo.FileUrl=fileResponse.URL;
             await _unitOfWork.Repository<Combo>().UpdateDetached(combo);
             await _unitOfWork.CommitAsync();
             var result= _mapper.Map<Combo, ComboResponseModel>(combo);

@@ -41,9 +41,9 @@ namespace ShopService.WebApi.Controllers
 
         [Authorize]
         [HttpGet("{id}/products")]
-        public async Task<IActionResult> GetAllProductByShopId(Guid id)
+        public async Task<IActionResult> GetAllProductByShopId(Guid id, int pageNumber = 0, int pageSize = 10)
         {
-            var result = await _service.GetAllProductByShopId(id);
+            var result = await _service.GetAllProductByShopId(id, pageNumber,pageSize);
             if (result is null) return BadRequest();
             return Ok(result);
         }

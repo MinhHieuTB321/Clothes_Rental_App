@@ -7,6 +7,7 @@ namespace ComboService.Application.ViewModels.Request
     {
         public string ComboName { get; set; } = default!;
         public string Description{get;set;}=default!;
+        public int Quantity { get; set; } = 0;
         public string Status { get; set; } = nameof(ActiveEnum.Active);
         public Guid ShopId { get; set; } = default!;
         public IFormFile File{get;set;}

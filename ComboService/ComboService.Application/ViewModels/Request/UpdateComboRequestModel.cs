@@ -1,17 +1,13 @@
-﻿using ComboService.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace ComboService.Application.ViewModels.Request
 {
     public class UpdateComboRequestModel
     {
-        public Guid ComboId { get; set; } = default!;
+        public Guid Id { get; set; } = default!;
         public string ComboName { get; set; } = default!;
+        public string Description{get;set;}=default!;
         public int Quantity { get; set; } = default!;
-        public string Status { get; set; } = nameof(ActiveEnum.Active);
+        public IFormFile? File{get;set;}=default!;
     }
 }

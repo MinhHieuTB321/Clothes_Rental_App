@@ -27,7 +27,9 @@ namespace ComboService.Infrastructures.AutoMapper
                 .ReverseMap();
 
 
-            CreateMap<UpdateComboRequestModel, Combo>();
+            CreateMap<Combo,UpdateComboRequestModel>()
+                .ForMember(x=>x.File,opt=>opt.Ignore())
+                .ReverseMap();
             #endregion
 
             #region PriceList
