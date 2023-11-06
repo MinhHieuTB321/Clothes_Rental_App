@@ -33,7 +33,7 @@ namespace ComboService.WebApi.Controllers
 
 		[Authorize(Roles = nameof(RoleEnum.Owner))]
 		[HttpPut("{id}")]
-		public async Task<IActionResult> Create(Guid id, [FromBody] UpdateProductComboRequest model)
+		public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductComboRequest model)
 		{
 			if(model.Id !=id) return BadRequest($"ID is not match with {id}!");
 			var result = await _service.Update(model);

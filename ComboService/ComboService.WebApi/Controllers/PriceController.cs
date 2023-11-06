@@ -20,7 +20,6 @@ namespace ComboService.WebApi.Controllers
         /// Get all pricelist
         /// </summary>
         [HttpGet]
-		[Authorize]
 		public async Task<ActionResult<IEnumerable<PriceListResponseModel>>> GetPriceLists()
         {
             var rs = await _service.GetPriceLists();
@@ -31,7 +30,6 @@ namespace ComboService.WebApi.Controllers
         /// Get pricelist
         /// </summary>
         [HttpGet("{id}")]
-		[Authorize]
 		public async Task<ActionResult<PriceListResponseModel>> GetPriceListById(Guid id)
         {
             var rs = await _service.GetPriceListByGuid(id);
@@ -65,7 +63,7 @@ namespace ComboService.WebApi.Controllers
         /// </summary>
         [Authorize(Roles = nameof(RoleEnum.Owner))]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<PriceListResponseModel>> DeleteCombo(Guid id)
+        public async Task<ActionResult<PriceListResponseModel>> DeletePrice(Guid id)
         {
             var rs = await _service.DeletePriceList(id);
             return NoContent();

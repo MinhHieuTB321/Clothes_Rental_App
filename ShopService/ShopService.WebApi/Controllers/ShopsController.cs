@@ -22,7 +22,7 @@ namespace ShopService.WebApi.Controllers
         //     _service = service;
         // }
 
-        [Authorize]
+
         [HttpGet]
         public async Task<IActionResult> GetAllShop()
         {
@@ -30,7 +30,7 @@ namespace ShopService.WebApi.Controllers
             if (result is null) return BadRequest();
             return Ok(result);
         }
-        [Authorize]
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetShopById(Guid id)
         {
@@ -39,7 +39,7 @@ namespace ShopService.WebApi.Controllers
             return Ok(result);
         }
 
-        [Authorize]
+
         [HttpGet("{id}/products")]
         public async Task<IActionResult> GetAllProductByShopId(Guid id, int pageNumber = 0, int pageSize = 10)
         {

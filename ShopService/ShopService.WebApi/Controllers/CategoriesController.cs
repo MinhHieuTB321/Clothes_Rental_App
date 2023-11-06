@@ -15,7 +15,6 @@ namespace ShopService.WebApi.Controllers
             _service = service;
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAllCategory()
         {
@@ -33,7 +32,7 @@ namespace ShopService.WebApi.Controllers
             if(!result) return BadRequest();
             return NoContent();  
         }
-        [Authorize]
+
         [HttpGet("{id}")]
         public async Task<IActionResult>GetCategoryById(Guid id)
         {
@@ -42,7 +41,7 @@ namespace ShopService.WebApi.Controllers
             return Ok(result);
         }
 
-        [Authorize]
+
         [HttpGet("{id}/products")]
         public async Task<IActionResult>GetAllProductByCategoryId(Guid id)
         {

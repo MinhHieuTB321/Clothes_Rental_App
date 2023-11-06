@@ -27,7 +27,6 @@ namespace ComboService.WebApi.Controllers
         /// <summary>
         /// Get all combo
         /// </summary>
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ComboResponseModel>>> GetAll()
         {
