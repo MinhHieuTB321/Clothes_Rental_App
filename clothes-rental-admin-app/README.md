@@ -1,2 +1,2 @@
-# lumbini-bookclub-admin
-Book shop admin console
+# clothes-rental-app-admin
+Clothes rental shop admin console
