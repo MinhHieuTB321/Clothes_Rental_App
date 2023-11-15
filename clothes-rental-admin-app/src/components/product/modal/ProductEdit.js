@@ -4,14 +4,19 @@ import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Alert from "../../common/Alert";
 import { Actions, useAPIRequest } from "../../common/api-request";
-import { PrimaryButton,DefaultButton } from "../../common/Buttons";
+import { PrimaryButton,DefaultButton,DangerButton } from "../../common/Buttons";
 import Card from "../../common/Card";
 import { LoadingContext } from "../../common/Contexts";
 import { Input, Select } from "../../common/FormControls";
-import { parseError } from "../../common/utils";
+import { parseError,formatTimestamp } from "../../common/utils";
 import { ProductImagesAdd,ProductImagesEdit } from "../ProductImages";
-import { addProduct, getProductEdit, saveProduct } from "../ProductRepo";
-
+import { addProduct, getProductEdit, saveProduct,getSubProducts,deleteProduct } from "../ProductRepo";
+import { Role } from "../../../constants";
+import { PencilAltIcon ,TrashIcon} from "@heroicons/react/outline";
+import { PlusIcon } from "@heroicons/react/solid";
+import Modal,{ConfirmModal} from "../../common/Modal";
+import Table from "../../common/Table";
+import { SubProductAdd, SubProductEdit } from "./SubProduct/ProductDetailModal";
 export function ProductAdd({shopId,handleClose}){
   const loadingContext = useContext(LoadingContext);
   const [dataState, requestData] = useAPIRequest(getProductEdit);
@@ -516,3 +521,187 @@ export function ProductEdit({product,handleClose}){
   );
 }
   
+
+export function ProductDetail({product,handleClose}){
+  const [showEdit, setShowEdit] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const loadingContext = useContext(LoadingContext);
+
+  const [list, setList] = useState([]);
+  const [deleteId, setDeleteId] = useState();
+  const [sub,setSub]=useState();
+  const [listState, requestSubProducts] = useAPIRequest(getSubProducts);
+  const [delState, requestDelete] = useAPIRequest(deleteProduct);
+
+  useEffect(() => {
+    requestSubProducts(product.id);
+
+    return () => {
+      loadingContext.setLoading(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    loadingContext.setLoading(listState.status === Actions.loading);
+    if (listState.status === Actions.success) {
+      setList(listState.payload.items ?? []);
+    }
+  }, [listState]);
+
+//#endregion
+
+//#region Delete Category
+
+useEffect(() => {
+    loadingContext.setLoading(delState.status === Actions.loading);
+    if (delState.status === Actions.success) {
+      toast.success("Product deleted successfully.");
+      requestSubProducts(product.id);
+    }
+    if (delState.status === Actions.failure) {
+      toast.error(parseError(delState.error));
+    }
+  }, [delState]);
+
+//#endregion
+
+  function getActionButtons(c) {
+    return (
+      <div className="flex space-x-2">
+        <PrimaryButton
+          onClick={() => {
+            setSub(c);
+            setShowEdit(true);
+          }}
+        >
+          <PencilAltIcon className="w-4 h-4" />
+        </PrimaryButton>
+        <DangerButton
+          onClick={() => {
+            setDeleteId(c.id);
+            setShowConfirm(true);
+          }}
+        >
+          <TrashIcon className="w-4 h-4" />
+        </DangerButton>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col space-y-4">
+
+      <Modal title="Add *" isOpen={showAdd}>
+        <SubProductAdd
+          subProduct={product}
+          handleClose={(result) => {
+            setShowAdd(false);
+            setSub(undefined);
+            if (result === true) {
+              toast.success("Sub - Product save successfully.");
+              requestSubProducts(product.id);
+            }
+          }}/>
+      </Modal>
+
+      <Modal title="Edit *" isOpen={showEdit}>
+        <SubProductEdit
+          subProduct={sub}
+          handleClose={(result) => {
+            setShowEdit(false);
+            setSub(undefined);
+            if (result === true) {
+              toast.success("Sub - Product save successfully.");
+              requestSubProducts(product.id);
+            }
+          }}/>
+      </Modal>
+
+      <ConfirmModal
+        message="Are you sure to delete?"
+        isOpen={showConfirm}
+        handleClose={(result) => {
+          setShowConfirm(false);
+          if (result) {
+            requestDelete(deleteId);
+          }
+          setDeleteId(undefined);
+        }}
+      />
+
+      {listState.status === Actions.failure && (
+        <Alert alertClass="alert-error mb-4" closeable>
+          {parseError(listState.error)}
+        </Alert>
+      )}
+
+      <Card>
+        <Card.Header>
+          <div className="flex items-center">
+            <h3 className="text-gray-600">Sub-Product</h3>
+            {
+              Role==='Owner'? <PrimaryButton
+              className="ml-auto"
+              onClick={() =>
+                 setShowAdd(true)
+                }
+            >
+              <PlusIcon className="w-5 h-5 mr-2" />
+              Add New
+            </PrimaryButton>
+            :null
+            }
+            
+          </div>
+        </Card.Header>
+        <Card.Body>
+          <div className="overflow-x-auto">
+            <Table>
+              <Table.THead>
+                <tr>
+                  <Table.TH className="w-40">Image</Table.TH>
+                  <Table.TH className="w-40">Color</Table.TH>
+                  <Table.TH className="w-40">size</Table.TH>
+                  <Table.TH className="w-40">Material</Table.TH>
+                  {
+                    Role==='Owner'?<Table.TH className="w-44"></Table.TH>:null
+                  }
+                  
+                </tr>
+              </Table.THead>
+
+              <Table.TBody>
+                {list.map((p) => {
+                  return (
+                    <tr key={p.id}>
+                      <Table.TD>
+                        <img
+                          src={p.productImages[0].fileUrl}
+                          alt="product"
+                          className="w-full aspect-auto rounded drop-shadow-md"
+                        />
+                      </Table.TD>
+                      <Table.TD>{p.color}</Table.TD>
+                      <Table.TD>{p.size}</Table.TD>
+                      <Table.TD>{p.material}</Table.TD>
+                      {
+                        Role==='Owner'?<Table.TD>{getActionButtons(p)}</Table.TD>:null
+                      }                 
+                    </tr>
+                  );
+                })}
+              </Table.TBody>
+            </Table>
+          </div>
+        </Card.Body>
+      </Card>
+          <div className="flex flex-row-reverse space-x-reverse space-x-2">
+            <DefaultButton onClick={handleClose}>
+                Cancel
+            </DefaultButton>
+          </div> 
+    </div>
+  );
+}

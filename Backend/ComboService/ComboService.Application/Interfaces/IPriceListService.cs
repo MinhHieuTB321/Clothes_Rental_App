@@ -10,7 +10,7 @@ namespace ComboService.Application.Interfaces
 {
     public interface IPriceListService
     {
-        Task<IEnumerable<PriceListResponseModel>> GetPriceLists();
+        Task<IEnumerable<PriceListResponseModel>> GetPriceLists(Guid comboId);
         Task<PriceListResponseModel> GetPriceListByGuid(Guid Id);
         Task<PriceListResponseModel> DeletePriceList(Guid Id);
         Task<PriceListResponseModel> UpdatePriceList(Guid Id, UpdatePriceListRequestModel request);

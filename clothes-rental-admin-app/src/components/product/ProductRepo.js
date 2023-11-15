@@ -133,3 +133,47 @@ export async function getProducts(q) {
       };
 
 }
+
+export async function getSubProducts(id) {
+  console.log(id);
+  console.log("Get All Sub - Product!");
+  var response = await axios.get(BASE_URL+`products/${id}/sub-products`)
+  .catch((err) => {
+    console.log(err.message);
+  });
+  return  response.data;
+}
+
+export async function addSubProduct(p) {
+  console.log(p);
+  var formData= new FormData();
+  formData.append("Status",'Active');
+  formData.append("ProductName",p.productName);
+  formData.append("Description",p.description);
+  formData.append("Material",p.material);
+  formData.append("Price",p.price);
+  formData.append("Compesation",p.compesation);
+  formData.append("CategoryId",p.categoryId);
+  
+  formData.append("ShopId",p.shopId);
+  formData.append("File",p.files[0]);
+  formData.append("Size",p.size);
+
+  formData.append("Color",p.color);
+  
+  formData.append("RootProductId",p.id);
+
+
+  await axios.post(BASE_URL+'products',
+  formData,
+  {
+    headers:{
+      "Content-Type": ' multipart/form-data' ,
+      Authorization: `Bearer ${BEAR_TOKEN}`
+    }
+  })
+  .then(response =>console.log("Added!"))
+  .catch(error => {
+      console.error('There was an error!', error);
+  });
+}

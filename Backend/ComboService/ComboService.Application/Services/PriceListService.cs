@@ -55,9 +55,9 @@ namespace ComboService.Application.Services
             }
         }
 
-        public async Task<IEnumerable<PriceListResponseModel>> GetPriceLists()
+        public async Task<IEnumerable<PriceListResponseModel>> GetPriceLists(Guid comboId)
         {
-            var priceLists = _unitOfWork.Repository<PriceList>().GetAll().ToList();
+            var priceLists = _unitOfWork.Repository<PriceList>().GetAll().Where(x=>x.IsDeleted==false&&x.ComboId==comboId).ToList();
             if (priceLists.Count > 0)
             {
                 priceLists = priceLists.OrderByDescending(x => x.CreationDate).ToList();
@@ -68,7 +68,7 @@ namespace ComboService.Application.Services
 
         public async Task<PriceListResponseModel> GetPriceListByGuid(Guid Id)
         {
-            var checkPriceList = await _unitOfWork.Repository<PriceList>().GetAll().Where(x => x.Id.Equals(Id)).FirstOrDefaultAsync();
+            var checkPriceList = await _unitOfWork.Repository<PriceList>().GetAll().Where(x => x.Id.Equals(Id)&&x.IsDeleted==false).FirstOrDefaultAsync();
             if (checkPriceList is not null)
             {
                 return _mapper.Map<PriceList, PriceListResponseModel>(checkPriceList);
@@ -81,7 +81,7 @@ namespace ComboService.Application.Services
             try
             {
                 PriceList priceList = null;
-                priceList = _unitOfWork.Repository<PriceList>().Find(x => x.Id.Equals(Id));
+                priceList = _unitOfWork.Repository<PriceList>().Find(x => x.Id.Equals(Id)&&x.IsDeleted==false);
                 if(priceList == null)
                 {
                     throw new NotFoundException("Price list is not exist!");

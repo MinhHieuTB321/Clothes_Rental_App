@@ -168,3 +168,14 @@ export async function getNonProductCombo(q){
     hasNext: false,
   }
 }
+
+export async function getPrices(comboId){
+  console.log("Get all Prices !");
+  var response = await axios.get(BASE_URL+'prices?comboId='+comboId)
+  .catch((err)=>{
+    console.log(err.message);
+  });
+  console.log(response.data);
+  return  response.data
+}
+

@@ -7,10 +7,10 @@ import { Actions, useAPIRequest } from "../../components/common/api-request";
 import { DangerButton, PrimaryButton } from "../../components/common/Buttons";
 import Card from "../../components/common/Card";
 import { LoadingContext } from "../../components/common/Contexts";
-import Modal, { ConfirmModal, ItemModal } from "../../components/common/Modal";
+import Modal, { ConfirmModal, ItemModal,ItemModalAdd } from "../../components/common/Modal";
 import Table from "../../components/common/Table";
 import {  parseError } from "../../components/common/utils";
-import { ComboAdd,ComboEdit } from "../../components/combo/modal/ComboEdit";
+import { ComboAdd,ComboEdit, ComboPrice } from "../../components/combo/modal/ComboEdit";
 import { deleteCombo,getCombos } from "../../components/combo/ComboRepo";
 import { Select } from "../../components/common/FormControls";
 import { ProductCombo } from "../../components/combo/product-combo/ProductCombo";
@@ -20,6 +20,7 @@ import { useParams } from "react-router-dom";
 
 function ComboList() {
   const params= useParams();
+  const [showPrice, setShowPrice] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
@@ -63,6 +64,9 @@ function ComboList() {
   function handleSelects(a){
     setCombo(a.combo);
     switch(a.status){
+      case "PRICE":    
+        setShowPrice(true);
+        break;
       case "PRODUCT":    
         setShowProduct(true);
         break;
@@ -81,6 +85,18 @@ function ComboList() {
 
   return (
     <div className="flex flex-col space-y-4">
+
+      <ItemModalAdd isOpen={showPrice}>
+        <ComboPrice
+          combo={Combo}
+          handleClose={() => {
+            setShowProduct(false);
+            setCombo(undefined);
+            requestCombos(params.id);
+          }}
+        />
+      </ItemModalAdd  >
+
 
       <ItemModal title={"Combo"} isOpen={showProduct}>
           <ProductCombo
@@ -198,6 +214,7 @@ function ComboList() {
                           } }
                         >
                           <option>Option</option>
+                          <option value="PRICE">Prices</option>
                           <option value="PRODUCT">Products</option>
                           {
                             Role==='Owner'?

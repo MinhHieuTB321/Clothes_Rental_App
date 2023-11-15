@@ -20,9 +20,9 @@ namespace ComboService.WebApi.Controllers
         /// Get all pricelist
         /// </summary>
         [HttpGet]
-		public async Task<ActionResult<IEnumerable<PriceListResponseModel>>> GetPriceLists()
+		public async Task<ActionResult<IEnumerable<PriceListResponseModel>>> GetPriceLists(Guid comboId)
         {
-            var rs = await _service.GetPriceLists();
+            var rs = await _service.GetPriceLists(comboId);
             return Ok(rs);
         }
 
@@ -70,3 +70,4 @@ namespace ComboService.WebApi.Controllers
         }
     }
 }
+        

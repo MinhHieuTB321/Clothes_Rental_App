@@ -1,6 +1,6 @@
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
-import { PlusIcon } from "@heroicons/react/solid";
-import { DangerButton, PrimaryButton } from "../../components/common/Buttons";
+import { PlusIcon,EyeIcon } from "@heroicons/react/solid";
+import { DangerButton, PrimaryButton,SecondaryButton } from "../../components/common/Buttons";
 import Card from "../../components/common/Card";
 import Table from "../../components/common/Table";
 import Pagination from "../../components/common/Pagination";
@@ -11,17 +11,18 @@ import { deleteProduct,getProducts } from "../../components/product/ProductRepo"
 import { LoadingContext } from "../../components/common/Contexts";
 import { formatPrice, formatTimestamp, parseError } from "../../components/common/utils";
 import { toast } from "react-toastify";
-import { ConfirmModal, ItemModalAdd, ItemModalProduct } from "../../components/common/Modal";
+import { ConfirmModal, ItemModal, ItemModalAdd, ItemModalProduct } from "../../components/common/Modal";
 import Alert from "../../components/common/Alert";
 import { useParams } from "react-router-dom";
 import { Role } from "../../constants";
-import { ProductAdd, ProductEdit } from "../../components/product/modal/ProductEdit";
+import { ProductAdd, ProductEdit,ProductDetail } from "../../components/product/modal/ProductEdit";
 
 
 function ProductList() {
   let params = useParams();
   const loadingContext = useContext(LoadingContext);
 
+  const [showDetail, setShowDetail] = useState(false);
   const [showAdd,setShowAdd]=useState(false);
   const [showEdit,setShowEdit]=useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -110,13 +111,33 @@ function ProductList() {
         >
           <TrashIcon className="w-4 h-4" />
         </DangerButton>
+
+        <SecondaryButton
+          onClick={() => {
+            setProduct(p);
+            setShowDetail(true);
+          }}
+        >
+          <EyeIcon className="w-4 h-4" />
+        </SecondaryButton>
       </div>
+
     );
   }
 
 
   return (
     <div className="flex flex-col space-y-4">
+
+      <ItemModalAdd isOpen={showDetail}>
+        <ProductDetail
+          product={Product}
+          handleClose={() => {
+            setShowDetail(false);
+            requestProducts(query);
+          }}
+        />
+      </ItemModalAdd  >
 
       <ItemModalProduct isOpen={showEdit}>
         <ProductEdit
