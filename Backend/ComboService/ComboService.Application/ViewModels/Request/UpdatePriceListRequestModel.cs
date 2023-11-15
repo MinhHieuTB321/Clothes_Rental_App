@@ -11,5 +11,6 @@ namespace ComboService.Application.ViewModels.Request
         public Guid PriceListId { get; set; } = default!;
         public double Deposit { get; set; } = default!;
         public double RentalPrice { get; set; } = default!;
+        public string Duration { get; set; } = default!;
     }
 }

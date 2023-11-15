@@ -175,7 +175,61 @@ export async function getPrices(comboId){
   .catch((err)=>{
     console.log(err.message);
   });
-  console.log(response.data);
   return  response.data
 }
 
+export async function deletePrice(id){
+  console.log("Delete Price !");
+  var response = await axios.delete(BASE_URL+'prices/'+id,
+  {
+    headers:{
+      Authorization: `Bearer ${BEAR_TOKEN}`
+    }
+  })
+  .catch((err)=>{
+    console.log(err.message);
+  });
+  return  response.data
+}
+
+export async function savePrice(price) {
+  await axios.put(BASE_URL+'prices/'+price.id,
+  {
+    priceListId:price.id,
+    deposit:price.deposit,
+    rentalPrice:price.rentalPrice,
+    duration:price.duration
+  }
+  ,{
+    headers:{
+      Authorization: `Bearer ${BEAR_TOKEN}`
+    }
+  })
+  .then(response =>console.log("Updated!"))
+  .catch(error => {
+      console.error('There was an error!', error);
+  });
+}
+
+
+export async function addPrice(p) {
+  var response = await axios.post(BASE_URL+'prices',
+  {
+    comboId:p.comboId,
+    deposit:p.values.deposit,
+    rentalPrice:p.values.rentalPrice,
+    duration:p.values.duration
+  }
+  ,
+  {
+    headers:{
+      Authorization: `Bearer ${BEAR_TOKEN}`
+    }
+  })
+  .then(console.log("Added!"))
+  .catch(error => {
+      console.error('There was an error!', error);
+  });
+
+  return response.data;
+}

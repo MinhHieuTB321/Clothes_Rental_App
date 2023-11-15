@@ -6,7 +6,7 @@ import { Actions, useAPIRequest } from "../../common/api-request";
 import { DefaultButton, PrimaryButton,DangerButton } from "../../common/Buttons";
 import { Input } from "../../common/FormControls";
 import { parseError } from "../../common/utils";
-import { addCombo,saveCombo,getPrices } from "../ComboRepo";
+import { addCombo,saveCombo,getPrices,deletePrice } from "../ComboRepo";
 import ComboImages from "../ComboImages";
 import { toast } from "react-toastify";
 import { PencilAltIcon ,TrashIcon} from "@heroicons/react/outline";
@@ -15,6 +15,7 @@ import Table from "../../common/Table";
 import Card from "../../common/Card";
 import { Role } from "../../../constants";
 import { PlusIcon } from "@heroicons/react/solid";
+import { PriceEdit,PriceAdd } from "../price/PriceEdit";
 
 
 
@@ -249,9 +250,9 @@ export function ComboPrice({combo,handleClose}){
 
   const [list, setList] = useState([]);
   const [deleteId, setDeleteId] = useState();
-  const [sub,setSub]=useState();
+  const [price,setPrice]=useState();
   const [listState, requestPrices] = useAPIRequest(getPrices);
-  const [delState, requestDelete] = useAPIRequest();
+  const [delState, requestDelete] = useAPIRequest(deletePrice);
 
   useEffect(() => {
     requestPrices(combo.id);
@@ -270,7 +271,7 @@ export function ComboPrice({combo,handleClose}){
 
 //#endregion
 
-//#region Delete Category
+//#region Delete Price
 
 useEffect(() => {
     loadingContext.setLoading(delState.status === Actions.loading);
@@ -290,7 +291,7 @@ useEffect(() => {
       <div className="flex space-x-2">
         <PrimaryButton
           onClick={() => {
-            setSub(c);
+            setPrice(c);
             setShowEdit(true);
           }}
         >
@@ -312,11 +313,30 @@ useEffect(() => {
     <div className="flex flex-col space-y-4">
 
       <Modal title="Add *" isOpen={showAdd}>
-        
+        <PriceAdd
+          comboId={combo.id}
+          handleClose={(result) => {
+            setShowAdd(false);
+            if (result === true) {
+              toast.success("Category save successfully.");
+              requestPrices(combo.id);
+            }
+          }}
+        />
       </Modal>
 
       <Modal title="Edit *" isOpen={showEdit}>
-        
+        <PriceEdit
+          price={price}
+          handleClose={(result) => {
+            setShowEdit(false);
+            setPrice(undefined);
+            if (result === true) {
+              toast.success("Category save successfully.");
+              requestPrices(combo.id);
+            }
+          }}
+        />
       </Modal>
 
       <ConfirmModal
@@ -326,6 +346,7 @@ useEffect(() => {
           setShowConfirm(false);
           if (result) {
             requestDelete(deleteId);
+            requestPrices(combo.id);
           }
           setDeleteId(undefined);
         }}
