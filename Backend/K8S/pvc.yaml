@@ -4,8 +4,9 @@ metadata:
   name: mssql-claim
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 30Gi
   storageClassName: standard-rwo
+  volumeBindingMode: Immediate
