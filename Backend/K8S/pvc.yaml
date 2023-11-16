@@ -2,7 +2,6 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mssql-claim
-volumeBindingMode: Immediate
 spec:
   accessModes:
     - ReadWriteMany
