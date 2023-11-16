@@ -1,12 +1,7 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
 metadata:
-  name: mssql-claim
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 30Gi
-  storageClassName: standard-rwo
+  name: standard-rwo
+provisioner: kubernetes.io/aws-ebs 
+volumeBindingMode: Immediate
  

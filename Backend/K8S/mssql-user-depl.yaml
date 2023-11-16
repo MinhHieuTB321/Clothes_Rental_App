@@ -33,7 +33,7 @@ spec:
       volumes:
       - name: mssqldb
         persistentVolumeClaim:
-          claimName: mssql-claim
+          claimName: standard-rwo
 ---
 apiVersion: v1
 kind: Service
