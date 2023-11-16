@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mssql-claim
+volumeBindingMode: Immediate
 spec:
   accessModes:
     - ReadWriteMany
@@ -9,4 +10,4 @@ spec:
     requests:
       storage: 30Gi
   storageClassName: standard-rwo
-  volumeBindingMode: Immediate
+ 
