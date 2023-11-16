@@ -4,8 +4,8 @@ metadata:
   name: mssql-claim
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
-      storage: 200Mi
-  storageClassName: standard
+      storage: 30Gi
+  storageClassName: standard-rwo
