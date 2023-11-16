@@ -314,11 +314,11 @@ useEffect(() => {
 
       <Modal title="Add *" isOpen={showAdd}>
         <PriceAdd
-          comboId={combo.id}
+          comboId={combo}
           handleClose={(result) => {
             setShowAdd(false);
             if (result === true) {
-              toast.success("Category save successfully.");
+              toast.success("Price save successfully.");
               requestPrices(combo.id);
             }
           }}
@@ -332,7 +332,7 @@ useEffect(() => {
             setShowEdit(false);
             setPrice(undefined);
             if (result === true) {
-              toast.success("Category save successfully.");
+              toast.success("Price save successfully.");
               requestPrices(combo.id);
             }
           }}

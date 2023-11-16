@@ -90,7 +90,7 @@ function ComboList() {
         <ComboPrice
           combo={Combo}
           handleClose={() => {
-            setShowProduct(false);
+            setShowPrice(false);
             setCombo(undefined);
             requestCombos(params.id);
           }}

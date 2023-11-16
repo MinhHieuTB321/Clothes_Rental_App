@@ -93,7 +93,7 @@ export function PriceEdit({ price = { name: "" }, handleClose }) {
   );
 }
 
-export function PriceAdd({ comboId, price = { name: "" }, handleClose }) {
+export function PriceAdd({combo, price = { name: "" }, handleClose }) {
   const [state, requestAdd] = useAPIRequest(addPrice);
 
   const formik = useFormik({
@@ -117,7 +117,7 @@ export function PriceAdd({ comboId, price = { name: "" }, handleClose }) {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: (values) => {
-      requestAdd({comboId,values});
+      requestAdd({comboId: combo.id,values});
     },
   });
 
