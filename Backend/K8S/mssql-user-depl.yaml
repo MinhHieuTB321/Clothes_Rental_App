@@ -33,7 +33,7 @@ spec:
       volumes:
       - name: mssqldb
         persistentVolumeClaim:
-          claimName: local-storage
+          claimName: mssql-claim
 ---
 apiVersion: v1
 kind: Service
