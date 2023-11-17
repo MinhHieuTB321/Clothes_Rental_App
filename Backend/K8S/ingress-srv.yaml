@@ -14,104 +14,104 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: users-clusterip-srv
+                name: user-app-service
                 port:
                   number: 80
           - path: /api/wallets
             pathType: Prefix
             backend:
               service:
-                name: users-clusterip-srv
+                name: user-app-service
                 port:
                   number: 80
           - path: /api/payments
             pathType: Prefix
             backend:
               service:
-                name: users-clusterip-srv
+                name: user-app-service
                 port:
                   number: 80
           - path: /api/users
             pathType: Prefix
             backend:
               service:
-                name: users-clusterip-srv
+                name: user-app-service
                 port:
                   number: 80
           - path: /api/transactions
             pathType: Prefix
             backend:
               service:
-                name: users-clusterip-srv
+                name: user-app-service
                 port:
                   number: 80
           - path: /api/orders
             pathType: Prefix
             backend:
               service:
-                name: orders-clusterip-srv
+                name: order-app-service
                 port:
                   number: 80
           - path: /api/customers
             pathType: Prefix
             backend:
               service:
-                name: orders-clusterip-srv
+                name: order-app-service
                 port:
                   number: 80
           - path: /api/combos
             pathType: Prefix
             backend:
               service:
-                name: combos-clusterip-srv
+                name: combo-app-service
                 port:
                   number: 80
           - path: /api/products-combo
             pathType: Prefix
             backend:
               service:
-                name: combos-clusterip-srv
+                name: combo-app-service
                 port:
                   number: 80
           - path: /api/prices
             pathType: Prefix
             backend:
               service:
-                name: combos-clusterip-srv
+                name: combo-app-service
                 port:
                   number: 80
           - path: /api/categories
             pathType: Prefix
             backend:
               service:
-                name: shops-clusterip-srv
+                name: shop-app-service
                 port:
                   number: 80
           - path: /api/owners
             pathType: Prefix
             backend:
               service:
-                name: shops-clusterip-srv
+                name: shop-app-service
                 port:
                   number: 80
           - path: /api/products
             pathType: Prefix
             backend:
               service:
-                name: shops-clusterip-srv
+                name: shop-app-service
                 port:
                   number: 80
           - path: /api/shops
             pathType: Prefix
             backend:
               service:
-                name: shops-clusterip-srv
+                name: shop-app-service
                 port:
                   number: 80
           - path: /api/images
             pathType: Prefix
             backend:
               service:
-                name: shops-clusterip-srv
+                name: shop-app-service
                 port:
                   number: 80
