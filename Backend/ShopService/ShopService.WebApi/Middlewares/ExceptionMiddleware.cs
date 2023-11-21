@@ -8,6 +8,7 @@
             {
                 await next(context);
             }
+
             catch (Exception ex)
             {
                 // push notification & writing log
